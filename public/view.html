@@ -8,10 +8,10 @@
          minimum-scale = 1.0,
          maximum-scale = 1.0,
          user-scalable = no" />
-    <script src="led/socket.io/socket.io.js"></script>
+    <script src="./socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script>
-        var socket = io();
+        var socket = io('/', { path: '/led/socket.io'});
     </script>
     <style>
         body {
@@ -35,7 +35,7 @@
         .ledSelector {
             width: 100%;
             padding: 20px;
-            max-width: 600px;
+            max-width: 500px;
             border-radius: 20px;
             box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
             background:white;
