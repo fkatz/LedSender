@@ -1,0 +1,317 @@
+<html>
+
+<head>
+    <meta name="viewport" content="
+         height = device-height,
+         width = device-width,
+         initial-scale = 1.0,
+         minimum-scale = 1.0,
+         maximum-scale = 1.0,
+         user-scalable = no" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script>
+        var socket = io();
+    </script>
+    <style>
+        body {
+            background: var(--mainColor);
+            vertical-align: middle;
+            user-select: none;
+            text-align: center;
+            font-family: Sans-Serif;
+            letter-spacing: 0.2rem;
+            font-size: 12px;
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .ledSelector {
+            width: 100%;
+            padding: 20px;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+        .buttonContainer{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-direction:row;
+            width:100%;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            /* Hides the slider so that custom slider can be made */
+            width: 100%;
+            padding: 10px;
+            /* Specific width is required for Firefox. */
+            background: transparent;
+            /* Otherwise white in Chrome */
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+            /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 100%;
+            background: #ffffff;
+            cursor: pointer;
+            margin-top: -4px;
+            /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+            box-shadow: 0px 0px 1px #000000;
+            /* Add cool effects to your sliders! */
+        }
+
+        input[type=range]::-moz-range-thumb {
+            box-shadow: 0px 0px 1px #000000;
+            height: 16px;
+            width: 16px;
+            margin-top: -2px;
+            border-radius: 3px;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8.4px;
+            cursor: pointer;
+            box-shadow: 0px 0px 1px #000000;
+            background: #3071a9;
+            border-radius: 1.3px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #367ebd;
+        }
+
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 8.4px;
+            cursor: pointer;
+            box-shadow: 0px 0px 1px #000000;
+            background: #3071a9;
+            border-radius: 1.3px;
+        }
+
+        /* Checkbox */
+        .container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 22px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Hide the browser's default checkbox */
+        .container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        /* Create a custom checkbox */
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+        }
+
+        /* On mouse-over, add a grey background color */
+        .container:hover input~.checkmark {
+            background-color: #ccc;
+        }
+
+        /* When the checkbox is checked, add a blue background */
+        .container input:checked~.checkmark {
+            background-color: #2196F3;
+        }
+
+        /* Create the checkmark/indicator (hidden when not checked) */
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        /* Show the checkmark when checked */
+        .container input:checked~.checkmark:after {
+            display: block;
+        }
+
+        /* Style the checkmark/indicator */
+        .container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="ledSelector">
+            <div id="colorController">
+                <input id="hue" type="range" min="0" max="1" step="0.005" v-model="hue">
+                <input id="sat" type="range" min="0" max="1" step="0.005" v-model="sat">
+                <input id="val" type="range" min="0" max="1" step="0.005" v-model="val">
+            </div>
+            <div id="dimController">
+                <input id="dim" type="range" min="0" max="1" value="1" step="0.005" v-model="dim">
+            </div>
+            <div class="buttonContainer">
+                <div id="rainbowController">
+                    <label class="container">
+                        <input id="rainbow" type="checkbox" v-model="state">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div id="pulseController">
+                    <label class="container">
+                        <input id="pulse" type="checkbox" v-model="state">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        const throttle = (func, limit) => {
+            let inThrottle
+            return function () {
+                const args = arguments
+                const context = this
+                if (!inThrottle) {
+                    func.apply(context, args)
+                    inThrottle = true
+                    setTimeout(() => inThrottle = false, limit)
+                }
+            }
+        }
+        //var isTouching = new Vue({data: {touch:false}});    
+        var isTouching = false;
+        document.addEventListener("mousedown", () => isTouching = true);
+        document.addEventListener("mouseup", () => setTimeout(() => isTouching = false), 500);
+        document.addEventListener("touchstart", () => isTouching = true);
+        document.addEventListener("touchend", () => setTimeout(() => isTouching = false), 500);
+        document.addEventListener("touchcancel", () => setTimeout(() => isTouching = false), 500);
+        state = {
+            color: {
+                hsv: []
+            },
+            rainbow: {
+            },
+            pulse: {
+
+            }
+        };
+        var color = new Vue({
+            el: '#colorController',
+            data: {
+                hue: 0.5,
+                sat: 1,
+                val: 1
+            },
+            watch: {
+                hue() { emit() },
+                sat() { emit() },
+                val() { emit() },
+            }
+        });
+        var dim = new Vue({
+            el: '#dimController',
+            data: {
+                dim: 1
+            }
+        });
+        var rainbow = new Vue({
+            el: '#rainbowController',
+            data: {
+                state: true,
+                step: 0.01,
+                ms: 10
+            },
+            watch: {
+                state() { emit() }
+            }
+        });
+        var pulse = new Vue({
+            el: '#pulseController',
+            data: {
+                state: true,
+                step: 0.01,
+                ms: 10
+            },
+            watch: {
+                state() { emit() }
+            }
+        });
+        function emit() {
+            state.color.hsv[0] = color.hue;
+            state.color.hsv[1] = color.sat;
+            state.color.hsv[2] = color.val;
+            state.dim = dim.dim;
+            state.rainbow.state = rainbow.state;
+            state.pulse.state = pulse.state;
+            console.log("Sent:")
+            console.log(state);
+            if (isTouching) socket.emit("ledStrip1", JSON.stringify(state));
+        }
+        socket.on('ledStrip1', function (msg) {
+            let newState = JSON.parse(msg);
+            console.log("Recieved:")
+            console.log(newState);
+
+            if (newState.color != undefined) {
+                color.hue = newState.color.h;
+                color.sat = newState.color.s;
+                color.val = newState.color.v;
+            }
+            if (newState.rainbow != undefined) {
+                rainbow.state = newState.rainbow.state;
+                rainbow.ms = newState.rainbow.ms;
+                rainbow.step = newState.rainbow.step;
+            }
+            if (newState.pulse != undefined) {
+                pulse.state = newState.pulse.state;
+                pulse.ms = newState.pulse.ms;
+                pulse.step = newState.pulse.step;
+            }
+
+        });
+    </script>
+</body>
+
+</html>
