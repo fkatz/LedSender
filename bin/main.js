@@ -27,8 +27,8 @@ server.post('/api/:device', function (req, res, next) {
     res.send({ savedChanges: true });
     next();
 });
-server.get("/public/*", restify.plugins.serveStatic({
-    directory: __dirname + "/../",
+server.get("/*", restify.plugins.serveStatic({
+    directory: __dirname + "/../public/",
     default: 'view.html'
 }));
 /* SOCKET.IO */

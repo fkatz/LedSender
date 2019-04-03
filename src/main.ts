@@ -27,9 +27,9 @@ server.post('/api/:device',
         res.send({ savedChanges: true });
         next();
     });
-server.get("/public/*",
+server.get("/*",
     restify.plugins.serveStatic({
-        directory: __dirname + "/../",
+        directory: __dirname + "/../public/",
         default: 'view.html'
     })
 )
