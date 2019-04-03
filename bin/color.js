@@ -256,7 +256,7 @@ exports.ColorState = ColorState;
 var Effect = /** @class */ (function () {
     function Effect(emitter) {
         this.state = false;
-        this.ms = 40;
+        this.ms = 100;
         this.emitter = emitter;
     }
     Effect.prototype.set = function (func, ms) {
