@@ -282,7 +282,8 @@ var Effect = /** @class */ (function () {
         this.state = false;
     };
     Effect.prototype.setState = function (state) {
-        state ? this.reset() : this.unset();
+        if (state != this.getState())
+            state ? this.reset() : this.unset();
     };
     Effect.prototype.setFunc = function (func) {
         this.func = func;

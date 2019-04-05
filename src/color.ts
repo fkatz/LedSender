@@ -253,7 +253,7 @@ abstract class Effect {
         this.state = false;
     }
     setState(state: boolean) {
-        state ? this.reset() : this.unset();
+        if(state != this.getState()) state ? this.reset() : this.unset();
     }
     setFunc(func: () => void): void {
         this.func = func;
