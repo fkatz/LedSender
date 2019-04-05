@@ -337,7 +337,7 @@ class PulseEffect extends Effect {
         console.log("radians in:"+radians+"; dim in:"+this.colorState.getDim());
         var dim:number;
         do {
-            radians += 1;
+            radians += 0.1;
             if(radians >=(2*Math.PI)) radians -= 4*Math.PI;
             dim = (Math.sin(radians)+1)/2;
         }
