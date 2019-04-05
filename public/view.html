@@ -15,21 +15,19 @@
     </script>
     <style>
         body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
             background: var(--color);
             vertical-align: middle;
             user-select: none;
             text-align: center;
             font-family: Sans-Serif;
+            padding: 0;
+            margin: 0;
             letter-spacing: 0.2rem;
             font-size: 12px;
-        }
-
-        main {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            height: 100%;
         }
 
         .ledSelector {
@@ -37,7 +35,6 @@
             padding: 20px;
             max-width: 300px;
             margin: 20px;
-            margin-top: 80px;
             border-radius: 20px;
             box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
             background: white;
@@ -50,7 +47,8 @@
             padding: 10px;
             /* Specific width is required for Firefox. */
             background: transparent;
-            margin-bottom:10px;
+            margin-bottom: 10px;
+            height: 32px;
             /* Otherwise white in Chrome */
         }
 
@@ -136,10 +134,11 @@
         .buttonContainer span {
             display: block;
             height: 32px;
-            margin-bottom:-16px;
-            line-height:32px;
-            margin-right:-6px;
+            margin-bottom: -16px;
+            line-height: 32px;
+            margin-right: -6px;
         }
+
         .container {
             display: block;
             position: relative;
@@ -230,14 +229,14 @@
                 <div id="rainbowController">
                     <label class="container">
                         <input id="rainbow" type="checkbox" v-model="state">
-                        <span class="checkmark"></span>
+                        <label class="checkmark"></label>
                     </label>
                 </div>
                 <span>Pulse</span>
                 <div id="pulseController">
                     <label class="container">
                         <input id="pulse" type="checkbox" v-model="state">
-                        <span class="checkmark"></span>
+                        <label class="checkmark"></label>
                     </label>
                 </div>
             </div>
