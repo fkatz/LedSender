@@ -215,30 +215,28 @@ var ColorState = /** @class */ (function () {
         return this.rainbow.get();
     };
     ColorState.prototype.setRainbow = function (state) {
-        console.log(state);
         if (state.state != undefined) {
-            this.rainbow.setState(state.state);
+            this.rainbow.setState(Boolean(state.state));
         }
         if (state.ms != undefined) {
-            this.rainbow.setMs(state.ms);
+            this.rainbow.setMs(Number(state.ms));
         }
         if (state.step != undefined) {
-            this.rainbow.setStep(state.step);
+            this.rainbow.setStep(Number(state.step));
         }
     };
     ColorState.prototype.getPulse = function () {
         return this.pulse;
     };
     ColorState.prototype.setPulse = function (state) {
-        console.log(state);
         if (state.state != undefined) {
-            this.pulse.setState(state.state);
+            this.pulse.setState(Boolean(state.state));
         }
         if (state.ms != undefined) {
-            this.pulse.setMs(state.ms);
+            this.pulse.setMs(Number(state.ms));
         }
         if (state.step != undefined) {
-            this.pulse.setStep(state.step);
+            this.pulse.setStep(Number(state.step));
         }
     };
     ColorState.getEventNames = function () {
@@ -262,7 +260,8 @@ var Effect = /** @class */ (function () {
     Effect.prototype.set = function (func, ms) {
         this.func = func;
         this.ms = ms;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     Effect.prototype.reset = function () {
         var _this = this;
@@ -282,16 +281,17 @@ var Effect = /** @class */ (function () {
         this.state = false;
     };
     Effect.prototype.setState = function (state) {
-        if (state != this.getState())
-            state ? this.reset() : this.unset();
+        state ? this.reset() : this.unset();
     };
     Effect.prototype.setFunc = function (func) {
         this.func = func;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     Effect.prototype.setMs = function (ms) {
         this.ms = ms;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     Effect.prototype.getState = function () {
         return this.state;
@@ -327,11 +327,13 @@ var RainbowEffect = /** @class */ (function (_super) {
     }
     RainbowEffect.prototype.setStep = function (step) {
         this.step = step;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     RainbowEffect.prototype.setColor = function (color) {
         this.color = color;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     RainbowEffect.prototype.get = function () {
         var intState = _super.prototype.get.call(this);
@@ -362,11 +364,13 @@ var PulseEffect = /** @class */ (function (_super) {
     }
     PulseEffect.prototype.setStep = function (step) {
         this.step = step;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     PulseEffect.prototype.setDim = function (dim) {
         this.dim = dim;
-        this.reset();
+        if (this.getState())
+            this.reset();
     };
     PulseEffect.prototype.get = function () {
         var intState = _super.prototype.get.call(this);

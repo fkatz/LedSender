@@ -128,23 +128,19 @@
             justify-content: center;
             flex-direction: row;
             width: 100%;
-            padding-bottom:10px;
+            padding-bottom: 10px;
         }
 
         .buttonContainer span.label {
             display: block;
-            height: 32px;
-            margin-bottom: -16px;
-            line-height: 32px;
             margin-right: -6px;
         }
 
         .container {
-            display: block;
             position: relative;
             padding-left: 35px;
             margin-left: 10px;
-            margin-bottom: 12px;
+            top: -8;
             cursor: pointer;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -205,6 +201,10 @@
             -ms-transform: rotate(45deg);
             transform: rotate(45deg);
         }
+
+        input[type="number"] {
+            width: 60px;
+        }
     </style>
 </head>
 
@@ -231,13 +231,19 @@
                         <input id="rainbow" type="checkbox" v-model="state">
                         <span class="checkmark"></span>
                     </label>
+                    <!-- ms <input type="number" min="0" step="0.001" v-model.lazy="ms"> -->
+                    step <input type="number" step="0.001" v-model.lazy="step">
                 </div>
+            </div>
+            <div class="buttonContainer">
                 <span class="label">Pulse</span>
                 <div id="pulseController">
                     <label class="container">
                         <input id="pulse" type="checkbox" v-model="state">
                         <span class="checkmark"></span>
                     </label>
+                    <!-- ms <input type="number" step="0.001" min="0" v-model.lazy="ms"> -->
+                    step <input type="number" step="0.001" v-model.lazy="step">
                 </div>
             </div>
         </div>
@@ -262,6 +268,11 @@
         document.addEventListener("touchstart", () => isTouching = true);
         document.addEventListener("touchend", () => setTimeout(() => isTouching = false), 500);
         document.addEventListener("touchcancel", () => setTimeout(() => isTouching = false), 500);
+        document.addEventListener("change",()=>{
+            console.log("input");
+            isTouching = true;
+            setTimeout(() => isTouching = false, 500);
+        });
         state = {
             color: {
                 hsv: []
@@ -302,7 +313,9 @@
                 ms: 10
             },
             watch: {
-                state() { emit() }
+                state() { emit() },
+                step() { emit() },
+                ms() { emit() }
             }
         });
         var pulse = new Vue({
@@ -313,7 +326,9 @@
                 ms: 10
             },
             watch: {
-                state() { emit() }
+                state() { emit() },
+                step() { emit() },
+                ms() { console.log("pepe"); emit() }
             }
         });
         satElement = document.getElementById("sat");
@@ -327,12 +342,22 @@
             state.color.hsv[0] = color.hue;
             state.color.hsv[1] = color.sat;
             state.color.hsv[2] = color.val;
+
             state.dim = dim.dim;
+
             state.rainbow.state = rainbow.state;
+            state.rainbow.ms = rainbow.ms;
+            state.rainbow.step = rainbow.step;
+
             state.pulse.state = pulse.state;
-            console.log("Sent:")
-            console.log(state);
-            if (isTouching) socket.emit("ledStrip1", JSON.stringify(state));
+            state.pulse.ms = pulse.ms;
+            state.pulse.step = pulse.step;
+
+            if (isTouching) {
+                console.log("Sent:")
+                console.log(state);
+                socket.emit("ledStrip1", JSON.stringify(state));
+            }
         }
         socket.on('ledStrip1', function (msg) {
             let newState = JSON.parse(msg);

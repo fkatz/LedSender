@@ -192,32 +192,30 @@ export class ColorState {
         return this.rainbow.get();
     }
     setRainbow(state: any) {
-        console.log(state);
         if (state.state != undefined) {
-            this.rainbow.setState(state.state);
+            this.rainbow.setState(Boolean(state.state));
         }
         if (state.ms != undefined) {
-            this.rainbow.setMs(state.ms);
+            this.rainbow.setMs(Number(state.ms));
         }
         if (state.step != undefined) {
 
-            this.rainbow.setStep(state.step);
+            this.rainbow.setStep(Number(state.step));
         }
     }
     getPulse():PulseEffect{
         return this.pulse;
     }
     setPulse(state: any) {
-        console.log(state);
         if (state.state != undefined) {
-            this.pulse.setState(state.state);
+            this.pulse.setState(Boolean(state.state));
         }
         if (state.ms != undefined) {
-            this.pulse.setMs(state.ms);
+            this.pulse.setMs(Number(state.ms));
         }
         if (state.step != undefined) {
 
-            this.pulse.setStep(state.step);
+            this.pulse.setStep(Number(state.step));
         }
     }
     static getEventNames(): string[] {
@@ -236,7 +234,7 @@ abstract class Effect {
     set(func: () => void, ms: number) {
         this.func = func;
         this.ms = ms;
-        this.reset();
+        if(this.getState()) this.reset();
     }
     reset(): void {
         if (this.state) clearInterval(this.intervalFunc);
@@ -253,15 +251,15 @@ abstract class Effect {
         this.state = false;
     }
     setState(state: boolean) {
-        if(state != this.getState()) state ? this.reset() : this.unset();
+        state ? this.reset() : this.unset();
     }
     setFunc(func: () => void): void {
         this.func = func;
-        this.reset();
+        if (this.getState()) this.reset();
     }
     setMs(ms: number): void {
         this.ms = ms;
-        this.reset();
+        if(this.getState()) this.reset();
     }
     getState(): boolean {
         return this.state;;
@@ -286,11 +284,11 @@ class RainbowEffect extends Effect {
     }
     setStep(step: number) {
         this.step = step;
-        this.reset();
+        if (this.getState()) this.reset();
     }
     setColor(color: Color) {
         this.color = color;
-        this.reset();
+        if (this.getState()) this.reset();
     }
     get(): any {
         var intState = super.get();
@@ -319,11 +317,11 @@ class PulseEffect extends Effect {
     }
     setStep(step: number) {
         this.step = step;
-        this.reset();
+        if (this.getState())this.reset();
     }
     setDim(dim: Dim) {
         this.dim = dim;
-        this.reset();
+        if(this.getState())this.reset();
     }
     get(): any {
         var intState = super.get();
