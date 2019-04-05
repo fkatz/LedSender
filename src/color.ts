@@ -333,13 +333,13 @@ class PulseEffect extends Effect {
         super.reset();
     }
     func = () => {
-        var radians = Math.asin(2*this.colorState.getDim()-1);
+        var radians = Math.acos(2*this.colorState.getDim()-1);
         console.log("radians in:"+radians+"; dim in:"+this.colorState.getDim());
         var dim:number;
         do {
             radians += 0.1;
             if(radians >=(2*Math.PI)) radians -= 4*Math.PI;
-            dim = (Math.sin(radians)+1)/2;
+            dim = (Math.cos(radians)+1)/2;
         }
         while (Math.abs(dim - this.colorState.getDim())<0.1);
         this.colorState.setDim(dim);
