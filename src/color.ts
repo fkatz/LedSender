@@ -334,6 +334,7 @@ class PulseEffect extends Effect {
     }
     func = () => {
         var radians = Math.asin(2*this.colorState.getDim()-1);
+        console.log("radians in:"+radians+"; dim in:"+this.colorState.getDim());
         var dim:number;
         do {
             radians += 1;
@@ -342,6 +343,7 @@ class PulseEffect extends Effect {
         }
         while (Math.abs(dim - this.colorState.getDim())<0.1);
         this.colorState.setDim(dim);
+        console.log("radians out:"+radians+"; dim out:"+this.colorState.getDim());
     }
     protected events: EventEntries = {
         onEffect: { dim: () => { return this.colorState.getDim() } },
