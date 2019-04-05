@@ -344,10 +344,11 @@ var PulseEffect = /** @class */ (function (_super) {
     function PulseEffect(emitter, colorState) {
         var _this = _super.call(this, emitter) || this;
         _this.func = function () {
-            var dim = (Math.sin(_this.radians) + 1) / 2;
-            _this.radians += _this.step;
-            if (_this.radians >= (2 * Math.PI))
-                _this.radians -= 4 * Math.PI;
+            var radians = Math.asin(_this.colorState.getDim());
+            radians += _this.step;
+            if (radians >= (2 * Math.PI))
+                radians -= 4 * Math.PI;
+            var dim = (Math.sin(radians) + 1) / 2;
             _this.colorState.setDim(dim);
         };
         _this.events = {
