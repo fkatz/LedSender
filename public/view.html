@@ -11,7 +11,7 @@
     <script src="./socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script>
-        var socket = io('/', { path: '/socket.io'});
+        var socket = io('/', { path: '/socket.io' });
     </script>
     <style>
         body {
@@ -38,15 +38,9 @@
             max-width: 500px;
             border-radius: 20px;
             box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-            background:white;
+            background: white;
         }
-        .buttonContainer{
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            flex-direction:row;
-            width:100%;
-        }
+
         input[type=range] {
             -webkit-appearance: none;
             /* Hides the slider so that custom slider can be made */
@@ -97,15 +91,23 @@
             background: #3071a9;
             border-radius: 8.4px;
         }
-        input[type=range]#sat::-webkit-slider-runnable-track {
-            background: linear-gradient(to right, var(--desat) 0%, var(--hue) 100%);
-        }
-        input[type=range]#val::-webkit-slider-runnable-track {
-            background: linear-gradient(to right, #000000 0%, var(--color) 100%);
-        }
+
         input[type=range]#hue::-webkit-slider-runnable-track {
             background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
         }
+
+        input[type=range]#sat::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, var(--desat) 0%, var(--hue) 100%);
+        }
+
+        input[type=range]#val::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, #000000 0%, var(--color) 100%);
+        }
+
+        input[type=range]#dim::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, #000000 0%, #ffffff 100%);
+        }
+
         input[type=range]:focus::-webkit-slider-runnable-track {
             background: inherit;
         }
@@ -120,14 +122,28 @@
         }
 
         /* Checkbox */
+        .buttonContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .buttonContainer span {
+            display: block;
+            height: 32px;
+            margin-bottom:-16px;
+            line-height:32px;
+            margin-right:-6px;
+        }
         .container {
             display: block;
             position: relative;
             padding-left: 35px;
-            margin-left:10px;
+            margin-left: 10px;
             margin-bottom: 12px;
             cursor: pointer;
-            font-size: 22px;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -194,22 +210,29 @@
     <main>
         <div class="ledSelector">
             <div id="colorController">
+                Hue<br>
                 <input id="hue" type="range" min="0" max="1" step="0.005" v-model="hue">
+                Saturation<br>
                 <input id="sat" type="range" min="0" max="1" step="0.005" v-model="sat">
+                Brightness<br>
                 <input id="val" type="range" min="0" max="1" step="0.005" v-model="val">
             </div>
             <div id="dimController">
-                <input id="dim" type="range" min="0" max="1" value="1" step="0.005" v-model="dim">
+                <label>Dim
+                    <input id="dim" type="range" min="0" max="1" value="1" step="0.005" v-model="dim">
+                </label>
             </div>
             <div class="buttonContainer">
+                <span>Rainbow</span>
                 <div id="rainbowController">
-                    <label class="container">Rainbow
+                    <label class="container">
                         <input id="rainbow" type="checkbox" v-model="state">
                         <span class="checkmark"></span>
                     </label>
                 </div>
+                <span>Pulse</span>
                 <div id="pulseController">
-                    <label class="container">Pulse
+                    <label class="container">
                         <input id="pulse" type="checkbox" v-model="state">
                         <span class="checkmark"></span>
                     </label>
@@ -264,6 +287,9 @@
             el: '#dimController',
             data: {
                 dim: 1
+            },
+            watch: {
+                dim() { emit() }
             }
         });
         var rainbow = new Vue({
@@ -291,10 +317,10 @@
         satElement = document.getElementById("sat");
         valElement = document.getElementById("val");
         function emit() {
-            document.body.style.setProperty("--color",hslToHex(color.hue,color.sat,color.val));
-            valElement.style.setProperty("--color",hslToHex(color.hue,1,0.5));
-            satElement.style.setProperty("--hue",hslToHex(color.hue,color.sat,color.val));
-            satElement.style.setProperty("--desat",hslToHex(color.hue,0,0.5));
+            document.body.style.setProperty("--color", toHex(color.hue, color.sat, color.val));
+            valElement.style.setProperty("--color", toHex(color.hue, color.sat, 1));
+            satElement.style.setProperty("--hue", toHex(color.hue, 1, 1));
+            satElement.style.setProperty("--desat", toHex(color.hue, 0, color.val));
 
             state.color.hsv[0] = color.hue;
             state.color.hsv[1] = color.sat;
@@ -316,6 +342,9 @@
                 color.sat = newState.color.s;
                 color.val = newState.color.v;
             }
+            if (newState.dim != undefined) {
+                dim.dim = newState.dim;
+            }
             if (newState.rainbow != undefined) {
                 rainbow.state = newState.rainbow.state;
                 rainbow.ms = newState.rainbow.ms;
@@ -328,35 +357,35 @@
             }
 
         });
-        function hslToHex(h, s, v) {
+        function toHex(h, s, v) {
             var r, g, b;
-        var i = Math.floor(h * 6);
-        var f = h * 6 - i;
-        var p = v * (1 - s);
-        var q = v * (1 - f * s);
-        var t = v * (1 - (1 - f) * s);
+            var i = Math.floor(h * 6);
+            var f = h * 6 - i;
+            var p = v * (1 - s);
+            var q = v * (1 - f * s);
+            var t = v * (1 - (1 - f) * s);
 
-        switch (i % 6) {
-            case 0: r = v, g = t, b = p; break;
-            case 1: r = q, g = v, b = p; break;
-            case 2: r = p, g = v, b = t; break;
-            case 3: r = p, g = q, b = v; break;
-            case 4: r = t, g = p, b = v; break;
-            case 5: r = v, g = p, b = q; break;
-            default: r = v, g = p, b = q; break;
-        }
-        r = Math.round(r * 255);
-        g = Math.round(g * 255);
-        b = Math.round(b * 255);
-        var hex = "#";
-        var r = r.toString(16);
-        if (r.length < 2) r = "0" + r;
-        var g = g.toString(16);
-        if (g.length < 2) g = "0" + g;
-        var b= b.toString(16);
-        if (b.length < 2) b = "0" + b;
-        hex += r + g + b;
-        return hex;
+            switch (i % 6) {
+                case 0: r = v, g = t, b = p; break;
+                case 1: r = q, g = v, b = p; break;
+                case 2: r = p, g = v, b = t; break;
+                case 3: r = p, g = q, b = v; break;
+                case 4: r = t, g = p, b = v; break;
+                case 5: r = v, g = p, b = q; break;
+                default: r = v, g = p, b = q; break;
+            }
+            r = Math.round(r * 255);
+            g = Math.round(g * 255);
+            b = Math.round(b * 255);
+            var hex = "#";
+            var r = r.toString(16);
+            if (r.length < 2) r = "0" + r;
+            var g = g.toString(16);
+            if (g.length < 2) g = "0" + g;
+            var b = b.toString(16);
+            if (b.length < 2) b = "0" + b;
+            hex += r + g + b;
+            return hex;
         }
     </script>
 </body>
