@@ -130,7 +130,7 @@
             width: 100%;
         }
 
-        .buttonContainer span {
+        .buttonContainer span.label {
             display: block;
             height: 32px;
             margin-bottom: -16px;
@@ -224,18 +224,18 @@
                 </label>
             </div>
             <div class="buttonContainer">
-                <span>Rainbow</span>
+                <span class="label">Rainbow</span>
                 <div id="rainbowController">
                     <label class="container">
                         <input id="rainbow" type="checkbox" v-model="state">
-                        <label class="checkmark"></label>
+                        <span class="checkmark"></span>
                     </label>
                 </div>
-                <span>Pulse</span>
+                <span class="label">Pulse</span>
                 <div id="pulseController">
                     <label class="container">
                         <input id="pulse" type="checkbox" v-model="state">
-                        <label class="checkmark"></label>
+                        <span class="checkmark"></span>
                     </label>
                 </div>
             </div>
