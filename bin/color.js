@@ -207,7 +207,7 @@ var ColorState = /** @class */ (function () {
         return this.dim;
     };
     ColorState.prototype.setDim = function (dim) {
-        if (dim != this.dim) {
+        if (dim != this.dim && !this.pulse.getState()) {
             this.dim = dim;
         }
     };
@@ -373,7 +373,7 @@ var PulseEffect = /** @class */ (function (_super) {
         return intState;
     };
     PulseEffect.prototype.reset = function () {
-        this.radians = -2 * Math.PI;
+        this.radians = Math.acos(2 * this.colorState.getDim() - 1);
         _super.prototype.reset.call(this);
     };
     return PulseEffect;

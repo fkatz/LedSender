@@ -182,7 +182,7 @@ export class ColorState {
         return this.dim;
     }
     setDim(dim: number) {
-        if (dim != this.dim) {
+        if (dim != this.dim && !this.pulse.getState()) {
             this.dim = dim;
         }
     }
@@ -329,7 +329,7 @@ class PulseEffect extends Effect {
         return intState;
     }
     reset(){
-        this.radians = -2*Math.PI;
+        this.radians = Math.acos(2*this.colorState.getDim()-1);
         super.reset();
     }
     func = () => {
