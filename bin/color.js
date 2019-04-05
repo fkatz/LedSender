@@ -344,7 +344,7 @@ var PulseEffect = /** @class */ (function (_super) {
     function PulseEffect(emitter, colorState) {
         var _this = _super.call(this, emitter) || this;
         _this.func = function () {
-            var radians = Math.asin(_this.colorState.getDim());
+            var radians = Math.asin(2 * _this.colorState.getDim() - 1);
             radians += _this.step;
             if (radians >= (2 * Math.PI))
                 radians -= 4 * Math.PI;
