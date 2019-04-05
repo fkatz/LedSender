@@ -340,7 +340,7 @@ class PulseEffect extends Effect {
             if(radians >=(2*Math.PI)) radians -= 4*Math.PI;
             dim = (Math.sin(radians)+1)/2;
         }
-        while (dim == this.colorState.getDim());
+        while (Math.abs(dim - this.colorState.getDim())>0.01);
         this.colorState.setDim(dim);
     }
     protected events: EventEntries = {
