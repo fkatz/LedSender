@@ -351,7 +351,7 @@ var PulseEffect = /** @class */ (function (_super) {
                 if (radians >= (2 * Math.PI))
                     radians -= 4 * Math.PI;
                 dim = (Math.sin(radians) + 1) / 2;
-            } while (Math.abs(dim - _this.colorState.getDim()) > 0.01);
+            } while (Math.abs(dim - _this.colorState.getDim()) < 0.1);
             _this.colorState.setDim(dim);
         };
         _this.events = {
