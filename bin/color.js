@@ -144,21 +144,21 @@ exports.Color = Color;
 var ColorState = /** @class */ (function () {
     function ColorState() {
         this.color = new Color();
-        this.dim = 1;
+        this.dim = { value: 1 };
         this.emitter = new Events.EventEmitter();
         this.rainbow = new RainbowEffect(this.emitter, this.color);
-        this.pulse = new PulseEffect(this.emitter, this);
+        this.pulse = new PulseEffect(this.emitter, this.dim);
     }
     ColorState.prototype.getLED = function () {
         var color = this.color.toRGB();
-        var r = ((color.r / 255) * 1000 * this.dim).toString();
-        var g = ((color.g / 255) * 1000 * this.dim).toString();
-        var b = ((color.b / 255) * 1000 * this.dim).toString();
+        var r = ((color.r / 255) * 1000 * this.dim.value).toString();
+        var g = ((color.g / 255) * 1000 * this.dim.value).toString();
+        var b = ((color.b / 255) * 1000 * this.dim.value).toString();
         return r + ":" + g + ":" + b;
     };
     ColorState.prototype.getState = function () {
         return {
-            dim: this.dim,
+            dim: this.dim.value,
             color: this.color.toHSV(),
             rainbow: this.rainbow.get(),
             pulse: this.pulse.get()
@@ -204,11 +204,11 @@ var ColorState = /** @class */ (function () {
         }
     };
     ColorState.prototype.getDim = function () {
-        return this.dim;
+        return this.dim.value;
     };
     ColorState.prototype.setDim = function (dim) {
-        if (dim != this.dim && !this.pulse.getState()) {
-            this.dim = dim;
+        if (dim != this.dim.value && !this.pulse.getState()) {
+            this.dim.value = dim;
         }
     };
     ColorState.prototype.getRainbow = function () {
@@ -341,30 +341,30 @@ var RainbowEffect = /** @class */ (function (_super) {
 }(Effect));
 var PulseEffect = /** @class */ (function (_super) {
     __extends(PulseEffect, _super);
-    function PulseEffect(emitter, colorState) {
+    function PulseEffect(emitter, dim) {
         var _this = _super.call(this, emitter) || this;
         _this.func = function () {
             var dim = (Math.cos(_this.radians) + 1) / 2;
             _this.radians += _this.step;
             if (_this.radians >= (2 * Math.PI))
                 _this.radians -= 4 * Math.PI;
-            _this.colorState.setDim(dim);
+            _this.dim.value = dim;
         };
         _this.events = {
-            onEffect: { dim: function () { return _this.colorState.getDim(); } },
+            onEffect: { dim: function () { return _this.dim.value; } },
             onStateChange: { pulse: function () { return _this.get(); } }
         };
         _this.step = 0.05;
         _this.radians = -2 * Math.PI;
-        _this.colorState = colorState;
+        _this.dim = dim;
         return _this;
     }
     PulseEffect.prototype.setStep = function (step) {
         this.step = step;
         this.reset();
     };
-    PulseEffect.prototype.setColorState = function (colorState) {
-        this.colorState = colorState;
+    PulseEffect.prototype.setDim = function (dim) {
+        this.dim = dim;
         this.reset();
     };
     PulseEffect.prototype.get = function () {
@@ -373,7 +373,7 @@ var PulseEffect = /** @class */ (function (_super) {
         return intState;
     };
     PulseEffect.prototype.reset = function () {
-        this.radians = Math.acos(2 * this.colorState.getDim() - 1);
+        this.radians = Math.acos(2 * this.dim.value - 1);
         _super.prototype.reset.call(this);
     };
     return PulseEffect;

@@ -108,23 +108,25 @@ export class Color {
     private v: number = 1;
 }
 
+interface Dim { value:number;}
+
 export class ColorState {
     private color: Color = new Color();
-    private dim: number = 1;
+    private dim: Dim = {value: 1};
     emitter: Events.EventEmitter = new Events.EventEmitter();
     private rainbow: RainbowEffect = new RainbowEffect(this.emitter, this.color);
-    private pulse: PulseEffect= new PulseEffect(this.emitter,this);
+    private pulse: PulseEffect= new PulseEffect(this.emitter,this.dim);
     getLED(): string {
         var color: RGB = this.color.toRGB();
 
-        var r: string = ((color.r / 255) * 1000 * this.dim).toString();
-        var g: string = ((color.g / 255) * 1000 * this.dim).toString();
-        var b: string = ((color.b / 255) * 1000 * this.dim).toString();
+        var r: string = ((color.r / 255) * 1000 * this.dim.value).toString();
+        var g: string = ((color.g / 255) * 1000 * this.dim.value).toString();
+        var b: string = ((color.b / 255) * 1000 * this.dim.value).toString();
         return r + ":" + g + ":" + b;
     }
     getState(): object {
         return {
-            dim: this.dim,
+            dim: this.dim.value,
             color: this.color.toHSV(),
             rainbow: this.rainbow.get(),
             pulse: this.pulse.get()
@@ -179,11 +181,11 @@ export class ColorState {
         }
     }
     getDim(): number {
-        return this.dim;
+        return this.dim.value;
     }
     setDim(dim: number) {
-        if (dim != this.dim && !this.pulse.getState()) {
-            this.dim = dim;
+        if (dim != this.dim.value && !this.pulse.getState()) {
+            this.dim.value = dim;
         }
     }
     getRainbow(): RainbowEffect {
@@ -311,16 +313,16 @@ class RainbowEffect extends Effect {
     private color: Color;
 }
 class PulseEffect extends Effect {
-    constructor(emitter: Events.EventEmitter, colorState: ColorState) {
+    constructor(emitter: Events.EventEmitter, dim: Dim) {
         super(emitter);
-        this.colorState = colorState;
+        this.dim = dim;
     }
     setStep(step: number) {
         this.step = step;
         this.reset();
     }
-    setColorState(colorState: ColorState) {
-        this.colorState = colorState;
+    setDim(dim: Dim) {
+        this.dim = dim;
         this.reset();
     }
     get(): any {
@@ -329,22 +331,22 @@ class PulseEffect extends Effect {
         return intState;
     }
     reset(){
-        this.radians = Math.acos(2*this.colorState.getDim()-1);
+        this.radians = Math.acos(2*this.dim.value-1);
         super.reset();
     }
     func = () => {
         var dim:number = (Math.cos(this.radians)+1)/2;
         this.radians+=this.step;
         if(this.radians >=(2*Math.PI)) this.radians -= 4*Math.PI;
-        this.colorState.setDim(dim);
+        this.dim.value = dim;
     }
     protected events: EventEntries = {
-        onEffect: { dim: () => { return this.colorState.getDim() } },
+        onEffect: { dim: () => { return this.dim.value } },
         onStateChange: { pulse: () => { return this.get() } }
     };
     private step: number = 0.05;
     private radians:number = -2*Math.PI;
-    private colorState: ColorState;
+    private dim: Dim;
 }
 
 interface EventEntries {
