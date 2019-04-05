@@ -334,9 +334,13 @@ class PulseEffect extends Effect {
     }
     func = () => {
         var radians = Math.asin(2*this.colorState.getDim()-1);
-        radians += this.step;
-        if(radians >=(2*Math.PI)) radians -= 4*Math.PI;
-        var dim:number = (Math.sin(radians)+1)/2;
+        var dim:number;
+        do {
+            radians += this.step;
+            if(radians >=(2*Math.PI)) radians -= 4*Math.PI;
+            dim = (Math.sin(radians)+1)/2;
+        }
+        while (dim == this.colorState.getDim());
         this.colorState.setDim(dim);
     }
     protected events: EventEntries = {
