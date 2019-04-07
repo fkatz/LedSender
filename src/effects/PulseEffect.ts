@@ -1,10 +1,9 @@
-import { Effect, EventEntries } from '../effects/Effect';
+import { Effect } from '../effects/Effect';
 import { Dim } from '../LedState';
-import * as Events from 'events';
 
 export class PulseEffect extends Effect {
-    constructor(emitter: Events.EventEmitter, dim: Dim) {
-        super(emitter);
+    constructor(dim: Dim) {
+        super();
         this.dim = dim;
     }
     set(state: any) {
@@ -45,10 +44,6 @@ export class PulseEffect extends Effect {
             this.radians += 4 * Math.PI;
         }
         this.dim.value = dim;
-    };
-    protected events: EventEntries = {
-        onEffect: { dim: () => { return this.dim.value; } },
-        onStateChange: { pulse: () => { return this.get(); } }
     };
     private step: number = 0.05;
     private radians: number = -2 * Math.PI;

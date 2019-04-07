@@ -1,10 +1,9 @@
-import { Effect, EventEntries } from './Effect';
-import * as Events from 'events';
+import { Effect } from './Effect';
 import { Color, HSV } from '../color';
 
 export class RainbowEffect extends Effect {
-    constructor(emitter: Events.EventEmitter, color: Color) {
-        super(emitter);
+    constructor(color: Color) {
+        super();
         this.color = color;
     }
     set(state: any) {
@@ -37,10 +36,6 @@ export class RainbowEffect extends Effect {
             }
         }
         this.color.fromHSV(hsv);
-    };
-    protected events: EventEntries = {
-        onEffect: { color: () => { return this.color.toHSV(); } },
-        onStateChange: { rainbow: () => { return this.get(); } }
     };
     private step: number = 0.005;
     private color: Color;

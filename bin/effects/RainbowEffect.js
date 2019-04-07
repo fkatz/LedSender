@@ -16,8 +16,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Effect_1 = require("./Effect");
 var RainbowEffect = /** @class */ (function (_super) {
     __extends(RainbowEffect, _super);
-    function RainbowEffect(emitter, color) {
-        var _this = _super.call(this, emitter) || this;
+    function RainbowEffect(color) {
+        var _this = _super.call(this) || this;
         _this.func = function () {
             var hsv = _this.color.toHSV();
             hsv.h += _this.step;
@@ -32,10 +32,6 @@ var RainbowEffect = /** @class */ (function (_super) {
                 }
             }
             _this.color.fromHSV(hsv);
-        };
-        _this.events = {
-            onEffect: { color: function () { return _this.color.toHSV(); } },
-            onStateChange: { rainbow: function () { return _this.get(); } }
         };
         _this.step = 0.005;
         _this.color = color;

@@ -16,8 +16,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Effect_1 = require("../effects/Effect");
 var PulseEffect = /** @class */ (function (_super) {
     __extends(PulseEffect, _super);
-    function PulseEffect(emitter, dim) {
-        var _this = _super.call(this, emitter) || this;
+    function PulseEffect(dim) {
+        var _this = _super.call(this) || this;
         _this.func = function () {
             var dim = _this.minValue + (1 - _this.minValue) * (Math.cos(_this.radians) + 1) / 2;
             _this.radians += _this.step;
@@ -28,10 +28,6 @@ var PulseEffect = /** @class */ (function (_super) {
                 _this.radians += 4 * Math.PI;
             }
             _this.dim.value = dim;
-        };
-        _this.events = {
-            onEffect: { dim: function () { return _this.dim.value; } },
-            onStateChange: { pulse: function () { return _this.get(); } }
         };
         _this.step = 0.05;
         _this.radians = -2 * Math.PI;

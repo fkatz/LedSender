@@ -39,51 +39,28 @@ io.on("connection", function (socket) {
         socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
             device[1].set(JSON.parse(state));
-            broadcast("", device[1].get(), device[0], socket);
+            broadcast(device[1].get(), device[0], socket);
         });
     }
 });
-var _loop_1 = function (device) {
-    var _loop_3 = function (eventName) {
-        device[1].emitter.addListener(eventName, function (e) {
-            broadcast(eventName, e, device[0]);
-        });
-    };
-    for (var _i = 0, _a = LedState_1.LedState.getEventNames(); _i < _a.length; _i++) {
-        var eventName = _a[_i];
-        _loop_3(eventName);
-    }
-};
-/* BROADCASTING */
-for (var _i = 0, _a = Object.entries(devices); _i < _a.length; _i++) {
-    var device = _a[_i];
-    _loop_1(device);
-}
-function broadcast(eventName, event, device, socket) {
-    var _a;
-    var message;
-    if (eventName.length > 0) {
-        message = JSON.stringify((_a = {}, _a[eventName] = event, _a));
-    }
-    else
-        message = JSON.stringify(event);
+function broadcast(state, device, socket) {
+    var message = JSON.stringify(state);
     if (socket != undefined) {
         socket.broadcast.emit(device, message);
     }
     else
         io.emit(device, message);
 }
-var _loop_2 = function (device) {
+var _loop_1 = function (device) {
     setInterval(function () {
         device[1].update();
-    }, device[1].getRefreshRate());
-    setInterval(function () {
+        broadcast(device[1].get(), device[0]);
         client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
     }, device[1].getRefreshRate());
 };
-for (var _b = 0, _c = Object.entries(devices); _b < _c.length; _b++) {
-    var device = _c[_b];
-    _loop_2(device);
+for (var _i = 0, _a = Object.entries(devices); _i < _a.length; _i++) {
+    var device = _a[_i];
+    _loop_1(device);
 }
 server.listen(8080, function () {
     console.log('%s listening at %s', server.name, server.url);

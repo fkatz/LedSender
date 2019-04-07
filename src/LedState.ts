@@ -1,7 +1,6 @@
 import { Color, RGB, HSV } from './color';
 import { PulseEffect } from "./effects/PulseEffect";
 import { RainbowEffect } from "./effects/RainbowEffect";
-import * as Events from 'events';
 import { Effect } from './effects/Effect';
 
 export interface Dim {
@@ -24,10 +23,9 @@ export class LedState implements Device {
     private refreshRate: number = 60;
     private ip: string;
     private port: number;
-    emitter: Events.EventEmitter = new Events.EventEmitter();
     public effects: Effects = {
-        rainbow: new RainbowEffect(this.emitter, this.color),
-        pulse: new PulseEffect(this.emitter, this.dim)
+        rainbow: new RainbowEffect(this.color),
+        pulse: new PulseEffect(this.dim)
     }
 
     constructor(ip: string,port:number, refreshRate?: number) {
@@ -112,13 +110,4 @@ export class LedState implements Device {
             effect.doEffect();
         }
     }
-    static getEventNames(): string[] {
-        return [
-            "color",
-            "dim",
-            "rainbow",
-            "pulse"
-        ];
-    }
-    ;
 }

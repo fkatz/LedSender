@@ -41,25 +41,13 @@ io.on("connection", function (socket) {
         socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
             device[1].set(JSON.parse(state));
-            broadcast("", device[1].get(), device[0], socket);
+            broadcast(device[1].get(), device[0], socket);
         });
     }
 })
 
-/* BROADCASTING */
-for (let device of Object.entries(devices)) {
-    for (let eventName of LedState.getEventNames()) {
-        device[1].emitter.addListener(eventName, function (e:any) {
-            broadcast(eventName, e, device[0]);
-        });
-    }
-}
-
-function broadcast(eventName: string, event: object, device: string, socket?: any): void {
-    var message: string;
-    if (eventName.length > 0) {
-        message = JSON.stringify({ [eventName]: event, });
-    } else message = JSON.stringify(event);
+function broadcast(state: object, device: string, socket?: any): void {
+    var message: string = JSON.stringify(state);
     if (socket != undefined) {
         socket.broadcast.emit(device, message);
     }
@@ -69,11 +57,8 @@ function broadcast(eventName: string, event: object, device: string, socket?: an
 for (let device of Object.entries(devices)) {
     setInterval(() => {
         device[1].update();
-
-    },device[1].getRefreshRate());
-    setInterval(() => {
+        broadcast(device[1].get(), device[0]);
         client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
-
     }, device[1].getRefreshRate());
 }
 

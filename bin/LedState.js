@@ -1,25 +1,16 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var color_1 = require("./color");
 var PulseEffect_1 = require("./effects/PulseEffect");
 var RainbowEffect_1 = require("./effects/RainbowEffect");
-var Events = __importStar(require("events"));
 var LedState = /** @class */ (function () {
     function LedState(ip, port, refreshRate) {
         this.color = new color_1.Color();
         this.dim = { value: 1 };
         this.refreshRate = 60;
-        this.emitter = new Events.EventEmitter();
         this.effects = {
-            rainbow: new RainbowEffect_1.RainbowEffect(this.emitter, this.color),
-            pulse: new PulseEffect_1.PulseEffect(this.emitter, this.dim)
+            rainbow: new RainbowEffect_1.RainbowEffect(this.color),
+            pulse: new PulseEffect_1.PulseEffect(this.dim)
         };
         if (refreshRate != undefined)
             this.refreshRate = refreshRate;
@@ -106,15 +97,6 @@ var LedState = /** @class */ (function () {
             effect.doEffect();
         }
     };
-    LedState.getEventNames = function () {
-        return [
-            "color",
-            "dim",
-            "rainbow",
-            "pulse"
-        ];
-    };
-    ;
     return LedState;
 }());
 exports.LedState = LedState;
