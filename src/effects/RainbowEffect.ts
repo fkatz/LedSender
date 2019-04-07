@@ -25,7 +25,6 @@ export class RainbowEffect extends Effect {
         return intState;
     }
     func = () => {
-        console.log("funca")
         var hsv: HSV = this.color.toHSV();
         hsv.h += this.step;
         if (hsv.h >= 1) {

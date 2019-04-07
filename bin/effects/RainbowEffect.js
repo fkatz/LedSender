@@ -19,7 +19,6 @@ var RainbowEffect = /** @class */ (function (_super) {
     function RainbowEffect(emitter, color) {
         var _this = _super.call(this, emitter) || this;
         _this.func = function () {
-            console.log("funca");
             var hsv = _this.color.toHSV();
             hsv.h += _this.step;
             if (hsv.h >= 1) {
