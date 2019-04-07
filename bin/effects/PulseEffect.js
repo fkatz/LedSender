@@ -45,9 +45,15 @@ var PulseEffect = /** @class */ (function (_super) {
         if (this.getState())
             this.reset();
     };
+    PulseEffect.prototype.setMinValue = function (minValue) {
+        this.minValue = minValue;
+        if (this.getState())
+            this.reset();
+    };
     PulseEffect.prototype.get = function () {
         var intState = _super.prototype.get.call(this);
         intState.step = this.step;
+        intState.minValue = this.minValue;
         return intState;
     };
     PulseEffect.prototype.reset = function () {

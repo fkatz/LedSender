@@ -1,0 +1,200 @@
+body {
+    overscroll-behavior: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: var(--color);
+    vertical-align: middle;
+    user-select: none;
+    text-align: center;
+    font-family: Sans-Serif;
+    padding: 10px;
+    margin: 0;
+    letter-spacing: 1.2px;
+    font-size: 12px;
+}
+
+.ledSelector {
+    width: 100vw;
+    padding: 20px;
+    max-width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    background: white;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    /* Hides the slider so that custom slider can be made */
+    width: 100%;
+    padding: 10px;
+    /* Specific width is required for Firefox. */
+    background: transparent;
+    margin-bottom: 10px;
+    height: 32px;
+    /* Otherwise white in Chrome */
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+    outline: none;
+    /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 32px;
+    width: 32px;
+    border-radius: 100%;
+    background: #ffffff;
+    cursor: pointer;
+    margin-top: -8px;
+    /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
+    /* Add cool effects to your sliders! */
+}
+
+input[type=range]::-moz-range-thumb {
+    box-shadow: 0px 0px 1px #000000;
+    height: 32px;
+    width: 32px;
+    margin-top: -2px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 16.8px;
+    cursor: pointer;
+    box-shadow: 0px 0px 1px #000000;
+    background: #3071a9;
+    border-radius: 8.4px;
+}
+
+input[type=range]#hue::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+input[type=range]#sat::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, var(--desat) 0%, var(--hue) 100%);
+}
+
+input[type=range]#val::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #000000 0%, var(--color) 100%);
+}
+
+input[type=range]#dim::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #000000 0%, #ffffff 100%);
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: inherit;
+}
+
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 16.8px;
+    cursor: pointer;
+    box-shadow: 0px 0px 1px #000000;
+    background: #3071a9;
+    border-radius: 1.3px;
+}
+
+/* Checkbox */
+
+.buttonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.buttonContainer span.label {
+    display: block;
+    margin-right: -6px;
+}
+
+.container {
+    position: relative;
+    padding-left: 35px;
+    margin-left: 10px;
+    top: -8;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+
+.container:hover input~.checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+
+.container input:checked~.checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+
+.container input:checked~.checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+
+.container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+input[type="number"] {
+    width: 60px;
+}

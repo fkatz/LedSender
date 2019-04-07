@@ -17,17 +17,23 @@ export class PulseEffect extends Effect {
         if (this.getState())
             this.reset();
     }
+    setMinValue(minValue: number) {
+        this.minValue = minValue;
+        if (this.getState())
+            this.reset();
+    }
     get(): any {
         var intState = super.get();
         intState.step = this.step;
+        intState.minValue = this.minValue;
         return intState;
     }
     reset() {
-        this.radians = Math.acos(2*(this.dim.value-this.minValue)/(1-this.minValue)-1)
+        this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1)
         super.reset();
     }
     func = () => {
-        var dim: number = this.minValue + (1-this.minValue)*(Math.cos(this.radians) + 1) / 2;
+        var dim: number = this.minValue + (1 - this.minValue) * (Math.cos(this.radians) + 1) / 2;
         this.radians += this.step;
         if (this.radians >= (2 * Math.PI))
             this.radians -= 4 * Math.PI;

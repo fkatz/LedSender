@@ -108,6 +108,9 @@ var LedState = /** @class */ (function () {
         if (state.step != undefined) {
             this.pulse.setStep(Number(state.step));
         }
+        if (state.minValue != undefined) {
+            this.pulse.setMinValue(Number(state.minValue));
+        }
     };
     LedState.getEventNames = function () {
         return [

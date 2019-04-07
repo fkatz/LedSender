@@ -102,6 +102,9 @@ export class LedState {
         if (state.step != undefined) {
             this.pulse.setStep(Number(state.step));
         }
+        if (state.minValue != undefined) {
+            this.pulse.setMinValue(Number(state.minValue));
+        }
     }
     static getEventNames(): string[] {
         return [
