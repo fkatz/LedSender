@@ -19,7 +19,7 @@ var PulseEffect = /** @class */ (function (_super) {
     function PulseEffect(emitter, dim) {
         var _this = _super.call(this, emitter) || this;
         _this.func = function () {
-            var dim = (Math.cos(_this.radians) + 1) / 2;
+            var dim = _this.minValue + (1 - _this.minValue) * (Math.cos(_this.radians) + 1) / 2;
             _this.radians += _this.step;
             if (_this.radians >= (2 * Math.PI))
                 _this.radians -= 4 * Math.PI;
@@ -31,6 +31,7 @@ var PulseEffect = /** @class */ (function (_super) {
         };
         _this.step = 0.05;
         _this.radians = -2 * Math.PI;
+        _this.minValue = 0.2;
         _this.dim = dim;
         return _this;
     }
@@ -50,7 +51,7 @@ var PulseEffect = /** @class */ (function (_super) {
         return intState;
     };
     PulseEffect.prototype.reset = function () {
-        this.radians = Math.acos(2 * this.dim.value - 1);
+        this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1);
         _super.prototype.reset.call(this);
     };
     return PulseEffect;
