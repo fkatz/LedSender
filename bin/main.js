@@ -7,26 +7,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var LedState = __importStar(require("./LedState"));
+var LedState_1 = require("./LedState");
 var restify = __importStar(require("restify"));
 var socketio = __importStar(require("socket.io"));
 var dgram = require('dgram');
 var client = dgram.createSocket('udp4');
 var devices = {
-    ledStrip1: {
-        state: new LedState.LedState(),
-        ip: '192.168.0.6'
-    }
+    ledStrip1: new LedState_1.LedState('192.168.0.6', 2390),
 };
 /* RESTIFY */
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.get('/api/:device', function (req, res, next) {
-    res.send(devices[req.params.device].state.getState());
+    res.send(devices[req.params.device].get());
     next();
 });
 server.post('/api/:device', function (req, res, next) {
-    devices[req.params.device].state.setState(req.body);
+    devices[req.params.device].set(req.body);
     res.send({ savedChanges: true });
     next();
 });
@@ -39,20 +36,20 @@ var io = socketio.listen(server.server);
 io.on("connection", function (socket) {
     for (var _i = 0, _a = Object.entries(devices); _i < _a.length; _i++) {
         var device = _a[_i];
-        socket.emit(device[0], JSON.stringify(device[1].state.getState()));
+        socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
-            device[1].state.setState(JSON.parse(state));
-            broadcast("", device[1].state.getState(), device[0], socket);
+            device[1].set(JSON.parse(state));
+            broadcast("", device[1].get(), device[0], socket);
         });
     }
 });
 var _loop_1 = function (device) {
     var _loop_3 = function (eventName) {
-        device[1].state.emitter.addListener(eventName, function (e) {
+        device[1].emitter.addListener(eventName, function (e) {
             broadcast(eventName, e, device[0]);
         });
     };
-    for (var _i = 0, _a = LedState.LedState.getEventNames(); _i < _a.length; _i++) {
+    for (var _i = 0, _a = LedState_1.LedState.getEventNames(); _i < _a.length; _i++) {
         var eventName = _a[_i];
         _loop_3(eventName);
     }
@@ -78,11 +75,8 @@ function broadcast(eventName, event, device, socket) {
 }
 var _loop_2 = function (device) {
     setInterval(function () {
-        for (var _i = 0, _a = Object.values(device[1].state.effects); _i < _a.length; _i++) {
-            var effect = _a[_i];
-            effect.doEffect;
-        }
-        client.send(device[1].state.getLED(), 2390, '192.168.0.6');
+        device[1].update();
+        client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
     }, 60);
 };
 for (var _b = 0, _c = Object.entries(devices); _b < _c.length; _b++) {

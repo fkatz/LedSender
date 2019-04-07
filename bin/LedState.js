@@ -12,39 +12,66 @@ var PulseEffect_1 = require("./effects/PulseEffect");
 var RainbowEffect_1 = require("./effects/RainbowEffect");
 var Events = __importStar(require("events"));
 var LedState = /** @class */ (function () {
-    function LedState() {
+    function LedState(ip, port, refreshRate) {
         this.color = new color_1.Color();
         this.dim = { value: 1 };
+        this.refreshRate = 60;
         this.emitter = new Events.EventEmitter();
         this.effects = {
             rainbow: new RainbowEffect_1.RainbowEffect(this.emitter, this.color),
             pulse: new PulseEffect_1.PulseEffect(this.emitter, this.dim)
         };
+        if (refreshRate != undefined)
+            this.refreshRate = refreshRate;
+        this.ip = ip;
+        this.port = port;
     }
-    LedState.prototype.getLED = function () {
+    LedState.prototype.getData = function () {
         var color = this.color.toRGB();
         var r = ((color.r / 255) * 1000 * this.dim.value).toString();
         var g = ((color.g / 255) * 1000 * this.dim.value).toString();
         var b = ((color.b / 255) * 1000 * this.dim.value).toString();
         return r + ":" + g + ":" + b;
     };
-    LedState.prototype.getState = function () {
+    LedState.prototype.getIP = function () {
+        return this.ip;
+    };
+    LedState.prototype.getPort = function () {
+        return this.port;
+    };
+    LedState.prototype.getRefreshRate = function () {
+        return this.refreshRate;
+    };
+    LedState.prototype.get = function () {
         var state = {
             dim: this.dim.value,
             color: this.color.toHSV(),
+            ip: this.ip,
+            refreshRate: this.refreshRate
         };
         for (var _i = 0, _a = Object.entries(this.effects); _i < _a.length; _i++) {
             var effect = _a[_i];
             state[effect[0]] = effect[1].get();
         }
     };
-    LedState.prototype.setState = function (state) {
+    LedState.prototype.set = function (state) {
         if (state.dim != undefined) {
-            this.setDim(Number(state.dim));
+            this.dim.value = Number(state.dim);
+        }
+        if (state.ip != undefined) {
+            this.ip = state.ip;
+        }
+        if (state.refreshRate != undefined) {
+            this.refreshRate = state.refreshRate;
+        }
+        if (state.color != undefined) {
+            this.setColor(state.color);
         }
         for (var _i = 0, _a = Object.entries(this.effects); _i < _a.length; _i++) {
             var effect = _a[_i];
-            effect[1].set(state[effect[0]]);
+            if (state[effect[0]] != undefined) {
+                effect[1].set(state[effect[0]]);
+            }
         }
     };
     LedState.prototype.getColor = function () {
@@ -72,12 +99,10 @@ var LedState = /** @class */ (function () {
             }
         }
     };
-    LedState.prototype.getDim = function () {
-        return this.dim.value;
-    };
-    LedState.prototype.setDim = function (dim) {
-        if (dim != this.dim.value) {
-            this.dim.value = dim;
+    LedState.prototype.update = function () {
+        for (var _i = 0, _a = Object.values(this.effects); _i < _a.length; _i++) {
+            var effect = _a[_i];
+            effect.doEffect;
         }
     };
     LedState.getEventNames = function () {

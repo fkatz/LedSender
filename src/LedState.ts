@@ -7,40 +7,78 @@ import { Effect } from './effects/Effect';
 export interface Dim {
     value: number;
 }
-interface Effects{
+interface Effects {
     [key: string]: Effect;
 }
+interface Device {
+    getIP():string;
+    getPort():number;
+    getRefreshRate():number;
+    getData():any;
+    update():void;
+}
 
-export class LedState {
+export class LedState implements Device {
     private color: Color = new Color();
     private dim: Dim = { value: 1 };
+    private refreshRate: number = 60;
+    private ip: string;
+    private port: number;
     emitter: Events.EventEmitter = new Events.EventEmitter();
-    public effects:Effects = {
-        rainbow: new RainbowEffect(this.emitter,this.color),
-        pulse: new PulseEffect(this.emitter,this.dim)
+    public effects: Effects = {
+        rainbow: new RainbowEffect(this.emitter, this.color),
+        pulse: new PulseEffect(this.emitter, this.dim)
     }
-    getLED(): string {
+
+    constructor(ip: string,port:number, refreshRate?: number) {
+        if (refreshRate != undefined) this.refreshRate = refreshRate;
+        this.ip = ip;
+        this.port = port;
+    }
+    getData(): string {
         var color: RGB = this.color.toRGB();
         var r: string = ((color.r / 255) * 1000 * this.dim.value).toString();
         var g: string = ((color.g / 255) * 1000 * this.dim.value).toString();
         var b: string = ((color.b / 255) * 1000 * this.dim.value).toString();
         return r + ":" + g + ":" + b;
     }
-    getState(): any {
+    getIP():string{
+        return this.ip;
+    }
+    getPort(): number {
+        return this.port;
+    }
+    getRefreshRate():number{
+        return this.refreshRate;
+    }
+    get(): any {
         var state: any = {
             dim: this.dim.value,
             color: this.color.toHSV(),
+            ip: this.ip,
+            refreshRate: this.refreshRate
         };
-        for (let effect of Object.entries(this.effects)){
+        for (let effect of Object.entries(this.effects)) {
             state[effect[0]] = effect[1].get();
         }
     }
-    setState(state: any) {
+    set(state: any) {
         if (state.dim != undefined) {
-            this.setDim(Number(state.dim));
+            this.dim.value = Number(state.dim);
+        }
+        if (state.ip != undefined) {
+            this.ip = state.ip;
+        }
+        if (state.refreshRate != undefined) {
+            this.refreshRate = state.refreshRate;
+        }
+        if (state.color != undefined) {
+            this.setColor(state.color);
         }
         for (let effect of Object.entries(this.effects)) {
-            effect[1].set(state[effect[0]]);
+            if (state[effect[0]] != undefined) {
+                effect[1].set(state[effect[0]]);
+            }
         }
     }
     getColor(): HSV {
@@ -68,15 +106,11 @@ export class LedState {
             }
         }
     }
-    getDim(): number {
-        return this.dim.value;
-    }
-    setDim(dim: number) {
-        if (dim != this.dim.value) {
-            this.dim.value = dim;
+    update():void{
+        for (var effect of Object.values(this.effects)) {
+            effect.doEffect;
         }
     }
-    
     static getEventNames(): string[] {
         return [
             "color",

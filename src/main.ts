@@ -1,5 +1,4 @@
-import * as Color from "./color";
-import * as LedState from "./LedState";
+import {LedState} from "./LedState";
 import * as restify from "restify";
 import * as socketio from "socket.io";
 const dgram = require('dgram');
@@ -7,17 +6,11 @@ const client = dgram.createSocket('udp4');
 
 /* MODEL */
 interface Devices {
-    [key: string]: {
-        state: LedState.LedState,
-        ip: string
-    };
+    [key: string]: LedState
 }
 var devices: Devices =
 {
-    ledStrip1: {
-        state: new LedState.LedState(),
-        ip: '192.168.0.6'
-    }
+    ledStrip1: new LedState('192.168.0.6',2390),
 };
 
 /* RESTIFY */
@@ -25,12 +18,12 @@ var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.get('/api/:device',
     function (req: any, res: any, next: any) {
-        res.send(devices[req.params.device].state.getState());
+        res.send(devices[req.params.device].get());
         next();
     });
 server.post('/api/:device',
     function (req: any, res: any, next: any) {
-        devices[req.params.device].state.setState(req.body);
+        devices[req.params.device].set(req.body);
         res.send({ savedChanges: true });
         next();
     });
@@ -45,18 +38,18 @@ server.get("/*",
 var io = socketio.listen(server.server);
 io.on("connection", function (socket) {
     for (var device of Object.entries(devices)) {
-        socket.emit(device[0], JSON.stringify(device[1].state.getState()));
+        socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
-            device[1].state.setState(JSON.parse(state));
-            broadcast("", device[1].state.getState(), device[0], socket);
+            device[1].set(JSON.parse(state));
+            broadcast("", device[1].get(), device[0], socket);
         });
     }
 })
 
 /* BROADCASTING */
 for (let device of Object.entries(devices)) {
-    for (let eventName of LedState.LedState.getEventNames()) {
-        device[1].state.emitter.addListener(eventName, function (e:any) {
+    for (let eventName of LedState.getEventNames()) {
+        device[1].emitter.addListener(eventName, function (e:any) {
             broadcast(eventName, e, device[0]);
         });
     }
@@ -75,10 +68,8 @@ function broadcast(eventName: string, event: object, device: string, socket?: an
 
 for (let device of Object.entries(devices)) {
     setInterval(() => {
-        for(var effect of Object.values(device[1].state.effects)){
-            effect.doEffect;
-        }
-        client.send(device[1].state.getLED(), 2390, '192.168.0.6');
+        device[1].update();
+        client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
 
     },60)
 }
