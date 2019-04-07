@@ -60,7 +60,7 @@ export abstract class Effect {
     protected state: boolean = false;
     protected abstract events: EventEntries;
     protected abstract func(): void;
-    protected ms: number = 100;
+    protected ms: number = 60;
     protected intervalFunc: any;
     protected emitter: Events.EventEmitter;
 }

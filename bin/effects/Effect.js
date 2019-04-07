@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Effect = /** @class */ (function () {
     function Effect(emitter) {
         this.state = false;
-        this.ms = 100;
+        this.ms = 60;
         this.emitter = emitter;
     }
     Effect.prototype.set = function (func, ms) {
