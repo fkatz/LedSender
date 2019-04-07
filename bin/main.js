@@ -78,6 +78,10 @@ function broadcast(eventName, event, device, socket) {
 }
 var _loop_2 = function (device) {
     setInterval(function () {
+        for (var _i = 0, _a = Object.values(device[1].state.effects); _i < _a.length; _i++) {
+            var effect = _a[_i];
+            effect.doEffect;
+        }
         client.send(device[1].state.getLED(), 2390, '192.168.0.6');
     }, 60);
 };

@@ -75,6 +75,9 @@ function broadcast(eventName: string, event: object, device: string, socket?: an
 
 for (let device of Object.entries(devices)) {
     setInterval(() => {
+        for(var effect of Object.values(device[1].state.effects)){
+            effect.doEffect;
+        }
         client.send(device[1].state.getLED(), 2390, '192.168.0.6');
 
     },60)

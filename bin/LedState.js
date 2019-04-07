@@ -16,8 +16,10 @@ var LedState = /** @class */ (function () {
         this.color = new color_1.Color();
         this.dim = { value: 1 };
         this.emitter = new Events.EventEmitter();
-        this.rainbow = new RainbowEffect_1.RainbowEffect(this.emitter, this.color);
-        this.pulse = new PulseEffect_1.PulseEffect(this.emitter, this.dim);
+        this.effects = {
+            rainbow: new RainbowEffect_1.RainbowEffect(this.emitter, this.color),
+            pulse: new PulseEffect_1.PulseEffect(this.emitter, this.dim)
+        };
     }
     LedState.prototype.getLED = function () {
         var color = this.color.toRGB();
@@ -27,25 +29,22 @@ var LedState = /** @class */ (function () {
         return r + ":" + g + ":" + b;
     };
     LedState.prototype.getState = function () {
-        return {
+        var state = {
             dim: this.dim.value,
             color: this.color.toHSV(),
-            rainbow: this.rainbow.get(),
-            pulse: this.pulse.get()
         };
+        for (var _i = 0, _a = Object.entries(this.effects); _i < _a.length; _i++) {
+            var effect = _a[_i];
+            state[effect[0]] = effect[1].get();
+        }
     };
     LedState.prototype.setState = function (state) {
         if (state.dim != undefined) {
             this.setDim(Number(state.dim));
         }
-        if (state.rainbow != undefined) {
-            this.setRainbow(state.rainbow);
-        }
-        if (state.pulse != undefined) {
-            this.setPulse(state.pulse);
-        }
-        if (state.color != undefined) {
-            this.setColor(state.color);
+        for (var _i = 0, _a = Object.entries(this.effects); _i < _a.length; _i++) {
+            var effect = _a[_i];
+            effect[1].set(state[effect[0]]);
         }
     };
     LedState.prototype.getColor = function () {
@@ -77,39 +76,8 @@ var LedState = /** @class */ (function () {
         return this.dim.value;
     };
     LedState.prototype.setDim = function (dim) {
-        if (dim != this.dim.value && !this.pulse.getState()) {
+        if (dim != this.dim.value) {
             this.dim.value = dim;
-        }
-    };
-    LedState.prototype.getRainbow = function () {
-        return this.rainbow.get();
-    };
-    LedState.prototype.setRainbow = function (state) {
-        if (state.state != undefined) {
-            this.rainbow.setState(Boolean(state.state));
-        }
-        if (state.ms != undefined) {
-            this.rainbow.setMs(Number(state.ms));
-        }
-        if (state.step != undefined) {
-            this.rainbow.setStep(Number(state.step));
-        }
-    };
-    LedState.prototype.getPulse = function () {
-        return this.pulse;
-    };
-    LedState.prototype.setPulse = function (state) {
-        if (state.state != undefined) {
-            this.pulse.setState(Boolean(state.state));
-        }
-        if (state.ms != undefined) {
-            this.pulse.setMs(Number(state.ms));
-        }
-        if (state.step != undefined) {
-            this.pulse.setStep(Number(state.step));
-        }
-        if (state.minValue != undefined) {
-            this.pulse.setMinValue(Number(state.minValue));
         }
     };
     LedState.getEventNames = function () {

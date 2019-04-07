@@ -7,15 +7,17 @@ export class RainbowEffect extends Effect {
         super(emitter);
         this.color = color;
     }
+    set(state: any) {
+        super.set(state);
+        if (state.step != undefined) {
+            this.setStep(Number(state.step));
+        }
+    }
     setStep(step: number) {
         this.step = step;
-        if (this.getState())
-            this.reset();
     }
     setColor(color: Color) {
         this.color = color;
-        if (this.getState())
-            this.reset();
     }
     get(): any {
         var intState = super.get();

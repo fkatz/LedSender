@@ -39,20 +39,23 @@ var PulseEffect = /** @class */ (function (_super) {
         _this.dim = dim;
         return _this;
     }
+    PulseEffect.prototype.set = function (state) {
+        _super.prototype.set.call(this, state);
+        if (state.step != undefined) {
+            this.setStep(Number(state.step));
+        }
+        if (state.minValue != undefined) {
+            this.setMinValue(Number(state.minValue));
+        }
+    };
     PulseEffect.prototype.setStep = function (step) {
         this.step = step;
-        if (this.getState())
-            this.reset();
     };
     PulseEffect.prototype.setDim = function (dim) {
         this.dim = dim;
-        if (this.getState())
-            this.reset();
     };
     PulseEffect.prototype.setMinValue = function (minValue) {
         this.minValue = minValue;
-        if (this.getState())
-            this.reset();
     };
     PulseEffect.prototype.get = function () {
         var intState = _super.prototype.get.call(this);
@@ -62,7 +65,6 @@ var PulseEffect = /** @class */ (function (_super) {
     };
     PulseEffect.prototype.reset = function () {
         this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1);
-        _super.prototype.reset.call(this);
     };
     return PulseEffect;
 }(Effect_1.Effect));

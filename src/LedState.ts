@@ -2,17 +2,23 @@ import { Color, RGB, HSV } from './color';
 import { PulseEffect } from "./effects/PulseEffect";
 import { RainbowEffect } from "./effects/RainbowEffect";
 import * as Events from 'events';
+import { Effect } from './effects/Effect';
 
 export interface Dim {
     value: number;
+}
+interface Effects{
+    [key: string]: Effect;
 }
 
 export class LedState {
     private color: Color = new Color();
     private dim: Dim = { value: 1 };
     emitter: Events.EventEmitter = new Events.EventEmitter();
-    private rainbow: RainbowEffect = new RainbowEffect(this.emitter, this.color);
-    private pulse: PulseEffect = new PulseEffect(this.emitter, this.dim);
+    public effects:Effects = {
+        rainbow: new RainbowEffect(this.emitter,this.color),
+        pulse: new PulseEffect(this.emitter,this.dim)
+    }
     getLED(): string {
         var color: RGB = this.color.toRGB();
         var r: string = ((color.r / 255) * 1000 * this.dim.value).toString();
@@ -20,26 +26,21 @@ export class LedState {
         var b: string = ((color.b / 255) * 1000 * this.dim.value).toString();
         return r + ":" + g + ":" + b;
     }
-    getState(): object {
-        return {
+    getState(): any {
+        var state: any = {
             dim: this.dim.value,
             color: this.color.toHSV(),
-            rainbow: this.rainbow.get(),
-            pulse: this.pulse.get()
         };
+        for (let effect of Object.entries(this.effects)){
+            state[effect[0]] = effect[1].get();
+        }
     }
     setState(state: any) {
         if (state.dim != undefined) {
             this.setDim(Number(state.dim));
         }
-        if (state.rainbow != undefined) {
-            this.setRainbow(state.rainbow);
-        }
-        if (state.pulse != undefined) {
-            this.setPulse(state.pulse);
-        }
-        if (state.color != undefined) {
-            this.setColor(state.color);
+        for (let effect of Object.entries(this.effects)) {
+            effect[1].set(state[effect[0]]);
         }
     }
     getColor(): HSV {
@@ -71,41 +72,11 @@ export class LedState {
         return this.dim.value;
     }
     setDim(dim: number) {
-        if (dim != this.dim.value && !this.pulse.getState()) {
+        if (dim != this.dim.value) {
             this.dim.value = dim;
         }
     }
-    getRainbow(): RainbowEffect {
-        return this.rainbow.get();
-    }
-    setRainbow(state: any) {
-        if (state.state != undefined) {
-            this.rainbow.setState(Boolean(state.state));
-        }
-        if (state.ms != undefined) {
-            this.rainbow.setMs(Number(state.ms));
-        }
-        if (state.step != undefined) {
-            this.rainbow.setStep(Number(state.step));
-        }
-    }
-    getPulse(): PulseEffect {
-        return this.pulse;
-    }
-    setPulse(state: any) {
-        if (state.state != undefined) {
-            this.pulse.setState(Boolean(state.state));
-        }
-        if (state.ms != undefined) {
-            this.pulse.setMs(Number(state.ms));
-        }
-        if (state.step != undefined) {
-            this.pulse.setStep(Number(state.step));
-        }
-        if (state.minValue != undefined) {
-            this.pulse.setMinValue(Number(state.minValue));
-        }
-    }
+    
     static getEventNames(): string[] {
         return [
             "color",

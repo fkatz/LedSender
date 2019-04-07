@@ -41,15 +41,17 @@ var RainbowEffect = /** @class */ (function (_super) {
         _this.color = color;
         return _this;
     }
+    RainbowEffect.prototype.set = function (state) {
+        _super.prototype.set.call(this, state);
+        if (state.step != undefined) {
+            this.setStep(Number(state.step));
+        }
+    };
     RainbowEffect.prototype.setStep = function (step) {
         this.step = step;
-        if (this.getState())
-            this.reset();
     };
     RainbowEffect.prototype.setColor = function (color) {
         this.color = color;
-        if (this.getState())
-            this.reset();
     };
     RainbowEffect.prototype.get = function () {
         var intState = _super.prototype.get.call(this);

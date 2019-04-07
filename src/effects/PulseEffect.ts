@@ -7,20 +7,23 @@ export class PulseEffect extends Effect {
         super(emitter);
         this.dim = dim;
     }
+    set(state: any) {
+        super.set(state);
+        if (state.step != undefined) {
+            this.setStep(Number(state.step));
+        }
+        if (state.minValue != undefined) {
+            this.setMinValue(Number(state.minValue));
+        }
+    }
     setStep(step: number) {
         this.step = step;
-        if (this.getState())
-            this.reset();
     }
     setDim(dim: Dim) {
         this.dim = dim;
-        if (this.getState())
-            this.reset();
     }
     setMinValue(minValue: number) {
         this.minValue = minValue;
-        if (this.getState())
-            this.reset();
     }
     get(): any {
         var intState = super.get();
@@ -30,7 +33,6 @@ export class PulseEffect extends Effect {
     }
     reset() {
         this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1)
-        super.reset();
     }
     func = () => {
         var dim: number = this.minValue + (1 - this.minValue) * (Math.cos(this.radians) + 1) / 2;
