@@ -76,6 +76,8 @@ function broadcast(eventName, event, device, socket) {
 var _loop_2 = function (device) {
     setInterval(function () {
         device[1].update();
+    }, device[1].getRefreshRate());
+    setInterval(function () {
         client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
     }, device[1].getRefreshRate());
 };
