@@ -7,14 +7,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Color = __importStar(require("./color"));
+var LedState = __importStar(require("./LedState"));
 var restify = __importStar(require("restify"));
 var socketio = __importStar(require("socket.io"));
 var dgram = require('dgram');
 var client = dgram.createSocket('udp4');
 var devices = {
     ledStrip1: {
-        state: new Color.ColorState(),
+        state: new LedState.LedState(),
         ip: '192.168.0.6'
     }
 };
@@ -52,7 +52,7 @@ var _loop_1 = function (device) {
             broadcast(eventName, e, device[0]);
         });
     };
-    for (var _i = 0, _a = Color.ColorState.getEventNames(); _i < _a.length; _i++) {
+    for (var _i = 0, _a = LedState.LedState.getEventNames(); _i < _a.length; _i++) {
         var eventName = _a[_i];
         _loop_3(eventName);
     }
@@ -88,4 +88,4 @@ for (var _b = 0, _c = Object.entries(devices); _b < _c.length; _b++) {
 server.listen(8080, function () {
     console.log('%s listening at %s', server.name, server.url);
 });
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=Main.js.map

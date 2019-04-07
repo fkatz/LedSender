@@ -1,4 +1,5 @@
 import * as Color from "./color";
+import * as LedState from "./LedState";
 import * as restify from "restify";
 import * as socketio from "socket.io";
 const dgram = require('dgram');
@@ -7,14 +8,14 @@ const client = dgram.createSocket('udp4');
 /* MODEL */
 interface Devices {
     [key: string]: {
-        state: Color.ColorState,
+        state: LedState.LedState,
         ip: string
     };
 }
 var devices: Devices =
 {
     ledStrip1: {
-        state: new Color.ColorState(),
+        state: new LedState.LedState(),
         ip: '192.168.0.6'
     }
 };
@@ -54,8 +55,8 @@ io.on("connection", function (socket) {
 
 /* BROADCASTING */
 for (let device of Object.entries(devices)) {
-    for (let eventName of Color.ColorState.getEventNames()) {
-        device[1].state.emitter.addListener(eventName, function (e) {
+    for (let eventName of LedState.LedState.getEventNames()) {
+        device[1].state.emitter.addListener(eventName, function (e:any) {
             broadcast(eventName, e, device[0]);
         });
     }
