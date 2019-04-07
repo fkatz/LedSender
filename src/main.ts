@@ -71,7 +71,7 @@ for (let device of Object.entries(devices)) {
         device[1].update();
         client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
 
-    },60)
+    },device[1].getRefreshRate());
 }
 
 

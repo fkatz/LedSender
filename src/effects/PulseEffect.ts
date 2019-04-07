@@ -21,6 +21,7 @@ export class PulseEffect extends Effect {
     }
     setDim(dim: Dim) {
         this.dim = dim;
+        this.resetRadians();
     }
     setMinValue(minValue: number) {
         this.minValue = minValue;
@@ -31,7 +32,7 @@ export class PulseEffect extends Effect {
         intState.minValue = this.minValue;
         return intState;
     }
-    reset() {
+    resetRadians() {
         this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1)
     }
     func = () => {

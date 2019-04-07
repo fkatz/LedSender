@@ -77,7 +77,7 @@ var _loop_2 = function (device) {
     setInterval(function () {
         device[1].update();
         client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
-    }, 60);
+    }, device[1].getRefreshRate());
 };
 for (var _b = 0, _c = Object.entries(devices); _b < _c.length; _b++) {
     var device = _c[_b];

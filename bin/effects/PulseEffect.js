@@ -53,6 +53,7 @@ var PulseEffect = /** @class */ (function (_super) {
     };
     PulseEffect.prototype.setDim = function (dim) {
         this.dim = dim;
+        this.resetRadians();
     };
     PulseEffect.prototype.setMinValue = function (minValue) {
         this.minValue = minValue;
@@ -63,7 +64,7 @@ var PulseEffect = /** @class */ (function (_super) {
         intState.minValue = this.minValue;
         return intState;
     };
-    PulseEffect.prototype.reset = function () {
+    PulseEffect.prototype.resetRadians = function () {
         this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1);
     };
     return PulseEffect;

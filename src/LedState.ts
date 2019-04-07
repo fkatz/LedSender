@@ -61,6 +61,7 @@ export class LedState implements Device {
         for (let effect of Object.entries(this.effects)) {
             state[effect[0]] = effect[1].get();
         }
+        return state;
     }
     set(state: any) {
         if (state.dim != undefined) {
@@ -108,7 +109,7 @@ export class LedState implements Device {
     }
     update():void{
         for (var effect of Object.values(this.effects)) {
-            effect.doEffect;
+            effect.doEffect();
         }
     }
     static getEventNames(): string[] {

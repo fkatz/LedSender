@@ -53,6 +53,7 @@ var LedState = /** @class */ (function () {
             var effect = _a[_i];
             state[effect[0]] = effect[1].get();
         }
+        return state;
     };
     LedState.prototype.set = function (state) {
         if (state.dim != undefined) {
@@ -102,7 +103,7 @@ var LedState = /** @class */ (function () {
     LedState.prototype.update = function () {
         for (var _i = 0, _a = Object.values(this.effects); _i < _a.length; _i++) {
             var effect = _a[_i];
-            effect.doEffect;
+            effect.doEffect();
         }
     };
     LedState.getEventNames = function () {
