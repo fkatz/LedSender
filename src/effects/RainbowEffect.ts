@@ -25,8 +25,14 @@ export class RainbowEffect extends Effect {
     func = () => {
         var hsv: HSV = this.color.toHSV();
         hsv.h += this.step;
-        while (hsv.h >= 1) {
-            hsv.h -= 1;
+        if (hsv.h >= 1) {
+            while (hsv.h >= 1) {
+                hsv.h -= 1;
+            }
+        } else if (hsv.h < 0) {
+            while (hsv.h < 0) {
+                hsv.h += 1;
+            }
         }
         this.color.fromHSV(hsv);
     };

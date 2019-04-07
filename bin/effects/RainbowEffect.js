@@ -21,8 +21,15 @@ var RainbowEffect = /** @class */ (function (_super) {
         _this.func = function () {
             var hsv = _this.color.toHSV();
             hsv.h += _this.step;
-            while (hsv.h >= 1) {
-                hsv.h -= 1;
+            if (hsv.h >= 1) {
+                while (hsv.h >= 1) {
+                    hsv.h -= 1;
+                }
+            }
+            else if (hsv.h < 0) {
+                while (hsv.h < 0) {
+                    hsv.h += 1;
+                }
             }
             _this.color.fromHSV(hsv);
         };

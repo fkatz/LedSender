@@ -35,8 +35,12 @@ export class PulseEffect extends Effect {
     func = () => {
         var dim: number = this.minValue + (1 - this.minValue) * (Math.cos(this.radians) + 1) / 2;
         this.radians += this.step;
-        if (this.radians >= (2 * Math.PI))
+        if (this.radians >= 2 * Math.PI) {
             this.radians -= 4 * Math.PI;
+        }
+        else if (this.radians <= -2 * Math.PI) {
+            this.radians += 4 * Math.PI;
+        }
         this.dim.value = dim;
     };
     protected events: EventEntries = {

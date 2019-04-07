@@ -21,8 +21,12 @@ var PulseEffect = /** @class */ (function (_super) {
         _this.func = function () {
             var dim = _this.minValue + (1 - _this.minValue) * (Math.cos(_this.radians) + 1) / 2;
             _this.radians += _this.step;
-            if (_this.radians >= (2 * Math.PI))
+            if (_this.radians >= 2 * Math.PI) {
                 _this.radians -= 4 * Math.PI;
+            }
+            else if (_this.radians <= -2 * Math.PI) {
+                _this.radians += 4 * Math.PI;
+            }
             _this.dim.value = dim;
         };
         _this.events = {
