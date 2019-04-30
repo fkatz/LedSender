@@ -1,6 +1,7 @@
 import { Color, RGB, HSV } from './color';
 import { PulseEffect } from "./effects/PulseEffect";
 import { RainbowEffect } from "./effects/RainbowEffect";
+import { AudioEffect } from "./effects/AudioEffect";
 import { Effect } from './effects/Effect';
 
 export interface Dim {
@@ -25,7 +26,8 @@ export class LedState implements Device {
     private port: number;
     public effects: Effects = {
         rainbow: new RainbowEffect(this.color),
-        pulse: new PulseEffect(this.dim)
+        pulse: new PulseEffect(this.dim),
+        audio: new AudioEffect(8081,this.dim)
     }
 
     constructor(ip: string,port:number, refreshRate?: number) {

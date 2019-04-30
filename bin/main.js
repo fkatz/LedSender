@@ -6,12 +6,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var LedState_1 = require("./LedState");
 var restify = __importStar(require("restify"));
-var socketio = __importStar(require("socket.io"));
-var dgram = require('dgram');
-var client = dgram.createSocket('udp4');
+var socket_io_1 = __importDefault(require("socket.io"));
+var dgram_1 = __importDefault(require("dgram"));
+var client = dgram_1.default.createSocket('udp4');
 var devices = {
     ledStrip1: new LedState_1.LedState('192.168.0.6', 2390),
 };
@@ -32,8 +35,9 @@ server.get("/*", restify.plugins.serveStatic({
     default: 'view.html'
 }));
 /* SOCKET.IO */
-var io = socketio.listen(server.server);
+var io = socket_io_1.default.listen(server.server);
 io.on("connection", function (socket) {
+    console.log("connected");
     for (var _i = 0, _a = Object.entries(devices); _i < _a.length; _i++) {
         var device = _a[_i];
         socket.emit(device[0], JSON.stringify(device[1].get()));
@@ -65,4 +69,4 @@ for (var _i = 0, _a = Object.entries(devices); _i < _a.length; _i++) {
 server.listen(8080, function () {
     console.log('%s listening at %s', server.name, server.url);
 });
-//# sourceMappingURL=Main.js.map
+//# sourceMappingURL=main.js.map

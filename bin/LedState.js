@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var color_1 = require("./color");
 var PulseEffect_1 = require("./effects/PulseEffect");
 var RainbowEffect_1 = require("./effects/RainbowEffect");
+var AudioEffect_1 = require("./effects/AudioEffect");
 var LedState = /** @class */ (function () {
     function LedState(ip, port, refreshRate) {
         this.color = new color_1.Color();
@@ -10,7 +11,8 @@ var LedState = /** @class */ (function () {
         this.refreshRate = 60;
         this.effects = {
             rainbow: new RainbowEffect_1.RainbowEffect(this.color),
-            pulse: new PulseEffect_1.PulseEffect(this.dim)
+            pulse: new PulseEffect_1.PulseEffect(this.dim),
+            audio: new AudioEffect_1.AudioEffect(8081, this.dim)
         };
         if (refreshRate != undefined)
             this.refreshRate = refreshRate;

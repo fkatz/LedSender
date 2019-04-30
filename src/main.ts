@@ -1,7 +1,7 @@
 import {LedState} from "./LedState";
 import * as restify from "restify";
-import * as socketio from "socket.io";
-const dgram = require('dgram');
+import socketio from "socket.io";
+import dgram from 'dgram';
 const client = dgram.createSocket('udp4');
 
 /* MODEL */
@@ -35,8 +35,10 @@ server.get("/*",
 )
 
 /* SOCKET.IO */
+
 var io = socketio.listen(server.server);
 io.on("connection", function (socket) {
+    console.log("connected");
     for (var device of Object.entries(devices)) {
         socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
@@ -61,7 +63,6 @@ for (let device of Object.entries(devices)) {
         client.send(device[1].getData(), device[1].getPort(), device[1].getIP());
     }, device[1].getRefreshRate());
 }
-
 
 server.listen(8080, function () {
     console.log('%s listening at %s', server.name, server.url);

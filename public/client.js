@@ -12,6 +12,8 @@ const throttle = (func, limit) => {
 }
 //var isTouching = new Vue({data: {touch:false}});    
 var isTouching = false;
+document.addEventListener("keydown", () => isTouching = true);
+document.addEventListener("keyup", () => setTimeout(() => isTouching = false), 500);
 document.addEventListener("mousedown", () => isTouching = true);
 document.addEventListener("mouseup", () => setTimeout(() => isTouching = false), 500);
 document.addEventListener("touchstart", () => isTouching = true);
@@ -29,6 +31,9 @@ state = {
     rainbow: {
     },
     pulse: {
+
+    },
+    audio: {
 
     }
 };
@@ -82,6 +87,19 @@ var pulse = new Vue({
         minValue() { emit() }
     }
 });
+var audio = new Vue({
+    el: '#audioController',
+    data: {
+        state: true,
+        freq: 0,
+        spectrum: [],
+    },
+    watch: {
+        state() { emit() },
+        freq() { emit() },
+        spectrum() { drawSpectrum(this.$refs.spectrum, this.spectrum, this.freq) }
+    }
+});
 satElement = document.getElementById("sat");
 valElement = document.getElementById("val");
 function emit() {
@@ -105,6 +123,8 @@ function emit() {
     state.pulse.step = pulse.step;
     state.pulse.minValue = pulse.minValue;
 
+    state.audio.state = audio.state;
+    state.audio.freq = audio.freq;
 
     if (isTouching) {
         console.log("Sent:")
@@ -114,8 +134,8 @@ function emit() {
 }
 socket.on('ledStrip1', function (msg) {
     let newState = JSON.parse(msg);
-    console.log("Recieved:")
-    console.log(newState);
+    //console.log("Recieved:")
+    //console.log(newState);
 
     if (newState.color != undefined) {
         color.hue = newState.color.h;
@@ -135,6 +155,11 @@ socket.on('ledStrip1', function (msg) {
         pulse.ms = newState.pulse.ms;
         pulse.step = newState.pulse.step;
         pulse.minValue = newState.pulse.minValue;
+    }
+    if (newState.audio != undefined) {
+        audio.state = newState.audio.state;
+        audio.freq = newState.audio.freq;
+        audio.spectrum = newState.audio.spectrum;
     }
 
 });
@@ -167,4 +192,18 @@ function toHex(h, s, v) {
     if (b.length < 2) b = "0" + b;
     hex += r + g + b;
     return hex;
+}
+
+function drawSpectrum(canvas, spectrum, freq) {
+    ctx = canvas.getContext("2d");
+    width = canvas.width / spectrum.length;
+    height = canvas.height;
+    let color = getComputedStyle(document.body).getPropertyValue('--color');
+    ctx.fillStyle = color;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < spectrum.length; i++) {
+        //ctx.fillRect(0,0,100,100)
+        //console.log({width: Math.floor(width*i), height: height, withF:Math.floor(width*(i+1)),heightf: (Math.floor(height*spectrum[i]))})
+        ctx.fillRect(width * i, height, width, -height * spectrum[i]);
+    }
 }

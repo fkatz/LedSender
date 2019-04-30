@@ -13,15 +13,17 @@ body {
     margin: 0;
     letter-spacing: 1.2px;
     font-size: 12px;
+    --main: #222;
+    --main-dim: #555;
 }
 
 .ledSelector {
     width: 100vw;
     padding: 20px;
     max-width: 300px;
-    border-radius: 20px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    background: var(--main);
+    color:white;
 }
 
 input[type=range] {
@@ -35,6 +37,39 @@ input[type=range] {
     height: 32px;
     /* Otherwise white in Chrome */
 }
+input:focus, textarea {
+    outline: none !important;
+}
+input[type=number]{
+    padding:3px;
+    width:70px;
+    color:white;
+    background:transparent;
+    border:2px solid var(--main-dim);
+    transition:0.2s;
+}
+input[type=number]:focus{
+    border:2px solid var(--color);
+}
+input[type=number]:focus::-webkit-inner-spin-button, 
+input[type=number]:focus::-webkit-outer-spin-button,
+input[type=number]:hover::-webkit-inner-spin-button, 
+input[type=number]:hover::-webkit-outer-spin-button { 
+  opacity:0.2;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  opacity:0;
+  transition:0.2s;
+}
+
+input[type=range].inline {
+    width: auto;
+    margin-bottom: -20px;
+    height: 10px;
+    padding: 0px;
+}
 
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -47,33 +82,39 @@ input[type=range]:focus {
 
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    height: 32px;
-    width: 32px;
-    border-radius: 100%;
-    background: #ffffff;
+    height: 20px;
+    width: 8px;
+    border-radius: 5px;
+    background:  var(--color);
     cursor: pointer;
     margin-top: -8px;
     /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
     /* Add cool effects to your sliders! */
+}
+
+input[type=range].inline::-webkit-slider-thumb {
+    height: 12px;
+    width: 12px;
+    margin-top: 2px;
+    box-shadow: none;
 }
 
 input[type=range]::-moz-range-thumb {
     box-shadow: 0px 0px 1px #000000;
-    height: 32px;
+    height: 8px;
     width: 32px;
     margin-top: -2px;
     border-radius: 3px;
-    background: #ffffff;
+    background: var(--color);
     cursor: pointer;
 }
 
 input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
-    height: 16.8px;
+    height: 4px;
     cursor: pointer;
-    box-shadow: 0px 0px 1px #000000;
-    background: #3071a9;
+    outline:1px solid rgba(255,255,255,0.05);
+    background: var(--color);
     border-radius: 8.4px;
 }
 
@@ -89,49 +130,97 @@ input[type=range]#val::-webkit-slider-runnable-track {
     background: linear-gradient(to right, #000000 0%, var(--color) 100%);
 }
 
-input[type=range]#dim::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #000000 0%, #ffffff 100%);
-}
-
-input[type=range]:focus::-webkit-slider-runnable-track {
-    background: inherit;
-}
+input[type=range]#dim::-webkit-slider-runnable-track {}
 
 input[type=range]::-moz-range-track {
     width: 100%;
     height: 16.8px;
     cursor: pointer;
-    box-shadow: 0px 0px 1px #000000;
-    background: #3071a9;
+    background: var(--color);
     border-radius: 1.3px;
+}
+
+#audioController{
+    width:100%;
+}
+
+#spectrum input[type=range].inline{
+    box-shadow:none;
+    outline:none;
+    margin-left:0px;
+    width:100%;
+    height:100px;
+    margin-bottom:-100px;
+    z-index:20;
+    position:relative;
+}
+#spectrum input[type=range].inline::-webkit-slider-thumb {
+    width: calc( 100% / 32 );
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    margin-top:0px;
+    margin-left:0px;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#spectrum input[type=range].inline::-webkit-slider-runnable-track {
+    outline:none;
+    background:transparent;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+
+#spectrum canvas{
+    display:block;
+    height:100px;
+    width:100%;
+    pointer-events: none;
+}
+#spectrum {
+    width:100%;
+    margin-left:0px;
+}
+
+#audioController{
+    display:block;
 }
 
 /* Checkbox */
 
 .buttonContainer {
+    text-align:left;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: left;
     flex-direction: row;
     width: 100%;
-    padding-bottom: 10px;
+    padding-top: 15px;
+    margin-bottom:15px;
+    border-top: 1px solid var(--main-dim);
 }
 
-.buttonContainer span.label {
-    display: block;
-    margin-right: -6px;
+.buttonContainer .header {
+    margin-bottom:10px;
 }
 
 .container {
     position: relative;
-    padding-left: 35px;
-    margin-left: 10px;
-    top: -8;
+    margin-right:60px;
+    top: -5;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.buttonContainer .options{
+    width:100%;
+    margin-top:-5px;
+    margin-left:60px;
+    text-align:right;
 }
 
 /* Hide the browser's default checkbox */
@@ -150,21 +239,30 @@ input[type=range]::-moz-range-track {
     position: absolute;
     top: 0;
     left: 0;
-    height: 25px;
-    width: 25px;
-    background-color: #eee;
+    height: 20px;
+    width: 46px;
+    background: transparent;
+    border: 2px solid var(--main-dim);
+    border-radius:11px;
+    transition:0.2s;
+
 }
 
 /* On mouse-over, add a grey background color */
 
 .container:hover input~.checkmark {
-    background-color: #ccc;
+    border-color: var(--color);
+}
+.container:hover .checkmark:after{
+    background-color: var(--color);
 }
 
 /* When the checkbox is checked, add a blue background */
 
 .container input:checked~.checkmark {
-    background-color: #2196F3;
+    border-color: var(--color);
+    background-color: var(--color);
+
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -172,29 +270,18 @@ input[type=range]::-moz-range-track {
 .checkmark:after {
     content: "";
     position: absolute;
-    display: none;
-}
-
-/* Show the checkmark when checked */
-
-.container input:checked~.checkmark:after {
-    display: block;
+    left: 2px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius:100%;
+    background:var(--main-dim);
+    transition:0.2s;
 }
 
 /* Style the checkmark/indicator */
 
-.container .checkmark:after {
-    left: 9px;
-    top: 5px;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
-}
-
-input[type="number"] {
-    width: 60px;
+.container input:checked~.checkmark:after {
+    left: 29px!important;
+    background:white;
 }
