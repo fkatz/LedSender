@@ -50,15 +50,6 @@ var color = new Vue({
         val() { emit() },
     }
 });
-var dim = new Vue({
-    el: '#dimController',
-    data: {
-        dim: 1
-    },
-    watch: {
-        dim() { emit() }
-    }
-});
 var rainbow = new Vue({
     el: '#rainbowController',
     data: {
@@ -93,10 +84,12 @@ var audio = new Vue({
         state: true,
         freq: 0,
         spectrum: [],
+        minValue: 0.2
     },
     watch: {
         state() { emit() },
         freq() { emit() },
+        minValue() { emit() },
         spectrum() { drawSpectrum(this.$refs.spectrum, this.spectrum, this.freq) }
     }
 });
@@ -112,8 +105,6 @@ function emit() {
     state.color.hsv[1] = color.sat;
     state.color.hsv[2] = color.val;
 
-    state.dim = dim.dim;
-
     state.rainbow.state = rainbow.state;
     state.rainbow.ms = rainbow.ms;
     state.rainbow.step = rainbow.step;
@@ -125,6 +116,8 @@ function emit() {
 
     state.audio.state = audio.state;
     state.audio.freq = audio.freq;
+    state.audio.minValue = audio.minValue;
+
 
     if (isTouching) {
         console.log("Sent:")
@@ -135,15 +128,12 @@ function emit() {
 socket.on('ledStrip1', function (msg) {
     let newState = JSON.parse(msg);
     //console.log("Recieved:")
-    //console.log(newState);
+    console.log(newState);
 
     if (newState.color != undefined) {
         color.hue = newState.color.h;
         color.sat = newState.color.s;
         color.val = newState.color.v;
-    }
-    if (newState.dim != undefined) {
-        dim.dim = newState.dim;
     }
     if (newState.rainbow != undefined) {
         rainbow.state = newState.rainbow.state;
@@ -160,6 +150,7 @@ socket.on('ledStrip1', function (msg) {
         audio.state = newState.audio.state;
         audio.freq = newState.audio.freq;
         audio.spectrum = newState.audio.spectrum;
+        audio.minValue = newState.audio.minValue;
     }
 
 });

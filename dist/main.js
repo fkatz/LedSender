@@ -22,12 +22,24 @@ var devices = {
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.get('/api/:device', function (req, res, next) {
-    res.send(devices[req.params.device].get());
+    if (devices[req.params.device] != undefined) {
+        res.send(devices[req.params.device].get());
+    }
+    else {
+        res.status(404);
+        res.send({ code: "ResourceNotFound" });
+    }
     next();
 });
 server.post('/api/:device', function (req, res, next) {
-    devices[req.params.device].set(req.body);
-    res.send({ savedChanges: true });
+    if (devices[req.params.device] != undefined) {
+        devices[req.params.device].set(req.body);
+        res.send({ saved: true });
+    }
+    else {
+        res.status(404);
+        res.send({ saved: false, code: "ResourceNotFound" });
+    }
     next();
 });
 server.get("/*", restify.plugins.serveStatic({
@@ -37,11 +49,12 @@ server.get("/*", restify.plugins.serveStatic({
 /* SOCKET.IO */
 var io = socket_io_1.default.listen(server.server);
 io.on("connection", function (socket) {
-    console.log("connected");
+    console.log("[" + (new Date()).toLocaleString('en-US', { hour12: false }) + "] " + socket.request.headers['x-forwarded-for'] + " connected");
     for (var _i = 0, _a = Object.entries(devices); _i < _a.length; _i++) {
         var device = _a[_i];
         socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
+            console.log("[" + (new Date()).toLocaleString('en-US', { hour12: false }) + "] " + socket.request.headers['x-forwarded-for'] + " set " + device[0]);
             device[1].set(JSON.parse(state));
             broadcast(device[1].get(), device[0], socket);
         });

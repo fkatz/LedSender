@@ -2,58 +2,57 @@ import { Color, RGB, HSV } from './color';
 import { PulseEffect } from "./effects/PulseEffect";
 import { RainbowEffect } from "./effects/RainbowEffect";
 import { AudioEffect } from "./effects/AudioEffect";
-import { Effect } from './effects/Effect';
+import { Effect, Dim } from './effects/Effect';
 
-export interface Dim {
-    value: number;
-}
 interface Effects {
     [key: string]: Effect;
 }
 interface Device {
-    getIP():string;
-    getPort():number;
-    getRefreshRate():number;
-    getData():any;
-    update():void;
+    getIP(): string;
+    getPort(): number;
+    getRefreshRate(): number;
+    getData(): any;
+    update(): void;
 }
 
 export class LedState implements Device {
     private color: Color = new Color();
-    private dim: Dim = { value: 1 };
     private refreshRate: number = 60;
     private ip: string;
     private port: number;
     public effects: Effects = {
         rainbow: new RainbowEffect(this.color),
-        pulse: new PulseEffect(this.dim),
-        audio: new AudioEffect(8081,this.dim)
+        pulse: new PulseEffect(),
+        audio: new AudioEffect(8081)
     }
 
-    constructor(ip: string,port:number, refreshRate?: number) {
+    constructor(ip: string, port: number, refreshRate?: number) {
         if (refreshRate != undefined) this.refreshRate = refreshRate;
         this.ip = ip;
         this.port = port;
     }
     getData(): string {
         var color: RGB = this.color.toRGB();
-        var r: string = ((color.r / 255) * 1000 * this.dim.value).toString();
-        var g: string = ((color.g / 255) * 1000 * this.dim.value).toString();
-        var b: string = ((color.b / 255) * 1000 * this.dim.value).toString();
+        var dim = Object.values(this.effects as unknown as Dim)
+            .filter((effect) => { return effect.getDim != undefined })
+            .map((effect) => { return effect.getDim() })
+            .reduce((acum: number, dim: number) => { return acum * dim; });
+        var r: string = ((color.r / 255) * 1000 * dim).toString();
+        var g: string = ((color.g / 255) * 1000 * dim).toString();
+        var b: string = ((color.b / 255) * 1000 * dim).toString();
         return r + ":" + g + ":" + b;
     }
-    getIP():string{
+    getIP(): string {
         return this.ip;
     }
     getPort(): number {
         return this.port;
     }
-    getRefreshRate():number{
+    getRefreshRate(): number {
         return this.refreshRate;
     }
     get(): any {
         var state: any = {
-            dim: this.dim.value,
             color: this.color.toHSV(),
             ip: this.ip,
             refreshRate: this.refreshRate
@@ -64,9 +63,6 @@ export class LedState implements Device {
         return state;
     }
     set(state: any) {
-        if (state.dim != undefined) {
-            this.dim.value = Number(state.dim);
-        }
         if (state.ip != undefined) {
             this.ip = state.ip;
         }
@@ -107,7 +103,7 @@ export class LedState implements Device {
             }
         }
     }
-    update():void{
+    update(): void {
         for (var effect of Object.values(this.effects)) {
             effect.doEffect();
         }

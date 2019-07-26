@@ -16,10 +16,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Effect_1 = require("../effects/Effect");
 var PulseEffect = /** @class */ (function (_super) {
     __extends(PulseEffect, _super);
-    function PulseEffect(dim) {
-        var _this = _super.call(this) || this;
+    function PulseEffect() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.func = function () {
-            var dim = _this.minValue + (1 - _this.minValue) * (Math.cos(_this.radians) + 1) / 2;
+            _this.dim = _this.minValue + (1 - _this.minValue) * (Math.cos(_this.radians) + 1) / 2;
             _this.radians += _this.step;
             if (_this.radians >= 2 * Math.PI) {
                 _this.radians -= 4 * Math.PI;
@@ -27,12 +27,11 @@ var PulseEffect = /** @class */ (function (_super) {
             else if (_this.radians <= -2 * Math.PI) {
                 _this.radians += 4 * Math.PI;
             }
-            _this.dim.value = dim;
         };
         _this.step = 0.05;
         _this.radians = -2 * Math.PI;
         _this.minValue = 0.2;
-        _this.dim = dim;
+        _this.dim = 1;
         return _this;
     }
     PulseEffect.prototype.set = function (state) {
@@ -47,9 +46,8 @@ var PulseEffect = /** @class */ (function (_super) {
     PulseEffect.prototype.setStep = function (step) {
         this.step = step;
     };
-    PulseEffect.prototype.setDim = function (dim) {
-        this.dim = dim;
-        this.resetRadians();
+    PulseEffect.prototype.getDim = function () {
+        return this.state ? this.dim : 1;
     };
     PulseEffect.prototype.setMinValue = function (minValue) {
         this.minValue = minValue;
@@ -58,10 +56,11 @@ var PulseEffect = /** @class */ (function (_super) {
         var intState = _super.prototype.get.call(this);
         intState.step = this.step;
         intState.minValue = this.minValue;
+        intState.dim = this.dim;
         return intState;
     };
     PulseEffect.prototype.resetRadians = function () {
-        this.radians = Math.acos(2 * (this.dim.value - this.minValue) / (1 - this.minValue) - 1);
+        this.radians = Math.acos(2 * (this.dim - this.minValue) / (1 - this.minValue) - 1);
     };
     return PulseEffect;
 }(Effect_1.Effect));

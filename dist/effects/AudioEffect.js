@@ -17,16 +17,16 @@ var Effect_1 = require("../effects/Effect");
 var AudioDevice_1 = require("../AudioDevice");
 var AudioEffect = /** @class */ (function (_super) {
     __extends(AudioEffect, _super);
-    function AudioEffect(port, dim) {
+    function AudioEffect(port) {
         var _this = _super.call(this) || this;
         _this.func = function () {
             if (_this.audioDevice.getSpectrum()[_this.freq] != undefined) {
-                var dim = _this.audioDevice.getSpectrum()[_this.freq];
-                _this.dim.value = dim;
+                _this.dim = _this.minValue + _this.audioDevice.getSpectrum()[_this.freq] * (1 - _this.minValue);
             }
         };
+        _this.minValue = 0;
+        _this.dim = 1;
         _this.freq = 0;
-        _this.dim = dim;
         _this.audioDevice = new AudioDevice_1.AudioDevice(port);
         return _this;
     }
@@ -35,17 +35,27 @@ var AudioEffect = /** @class */ (function (_super) {
         if (state.freq != undefined) {
             this.setFreq(Number(state.freq));
         }
+        if (state.minValue != undefined) {
+            this.setMinValue(Number(state.minValue));
+        }
     };
-    AudioEffect.prototype.setDim = function (dim) {
-        this.dim = dim;
+    AudioEffect.prototype.getDim = function () {
+        return this.state ? this.dim : 1;
     };
     AudioEffect.prototype.setFreq = function (freq) {
         this.freq = freq;
     };
+    AudioEffect.prototype.setMinValue = function (minValue) {
+        if (minValue < 1) {
+            this.minValue = minValue;
+        }
+    };
     AudioEffect.prototype.get = function () {
         var intState = _super.prototype.get.call(this);
         intState.freq = this.freq;
+        intState.minValue = this.minValue;
         intState.spectrum = this.audioDevice.getSpectrum();
+        intState.dim = this.dim;
         return intState;
     };
     return AudioEffect;

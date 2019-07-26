@@ -1,4 +1,4 @@
-import {LedState} from "./LedState";
+import { LedState } from "./LedState";
 import * as restify from "restify";
 import socketio from "socket.io";
 import dgram from 'dgram';
@@ -10,7 +10,7 @@ interface Devices {
 }
 var devices: Devices =
 {
-    ledStrip1: new LedState('192.168.0.6',2390),
+    ledStrip1: new LedState('192.168.0.6', 2390),
 };
 
 /* RESTIFY */
@@ -18,13 +18,26 @@ var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.get('/api/:device',
     function (req: any, res: any, next: any) {
-        res.send(devices[req.params.device].get());
+        if (devices[req.params.device] != undefined) {
+            res.send(devices[req.params.device].get());
+        }
+        else {
+            res.status(404);
+            res.send({ code: "ResourceNotFound" });
+        }
         next();
     });
 server.post('/api/:device',
     function (req: any, res: any, next: any) {
-        devices[req.params.device].set(req.body);
-        res.send({ savedChanges: true });
+        if (devices[req.params.device] != undefined) {
+            devices[req.params.device].set(req.body);
+            res.send({ saved: true });
+        }
+        else {
+            res.status(404);
+            res.send({ saved: false, code: "ResourceNotFound" });
+        }
+
         next();
     });
 server.get("/*",
@@ -38,10 +51,11 @@ server.get("/*",
 
 var io = socketio.listen(server.server);
 io.on("connection", function (socket) {
-    console.log("connected");
+    console.log("[" + (new Date()).toLocaleString('en-US', { hour12: false }) + "] " + socket.request.headers['x-forwarded-for'] + " connected");
     for (var device of Object.entries(devices)) {
         socket.emit(device[0], JSON.stringify(device[1].get()));
         socket.on(device[0], function (state) {
+            console.log("[" + (new Date()).toLocaleString('en-US', { hour12: false }) + "] " + socket.request.headers['x-forwarded-for'] + " set "+ device[0]);
             device[1].set(JSON.parse(state));
             broadcast(device[1].get(), device[0], socket);
         });

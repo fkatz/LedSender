@@ -7,6 +7,10 @@ export interface EventEntries {
     }
 }
 
+export interface Dim {
+    getDim() : number;
+}
+
 export abstract class Effect {
     set(state: any) {
         if (state.state != undefined) {

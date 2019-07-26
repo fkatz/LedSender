@@ -8,8 +8,10 @@
          minimum-scale = 1.0,
          maximum-scale = 1.0,
          user-scalable = no" />
+    <title>LED Sender 2</title>
+
     <script src="./socket.io/socket.io.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
     <script>
         var socket = io('/', { path: '/socket.io' });
     </script>
@@ -26,11 +28,6 @@
                 <input id="sat" type="range" min="0" max="1" step="0.005" v-model="sat">
                 Brightness<br>
                 <input id="val" type="range" min="0" max="1" step="0.005" v-model="val">
-            </div>
-            <div id="dimController">
-                <label>Dim
-                    <input id="dim" type="range" min="0" max="1" value="1" step="0.005" v-model="dim">
-                </label>
             </div>
             <div id="rainbowController" class="buttonContainer">
                 <div class="header">
@@ -68,6 +65,9 @@
                     <span class="label">Audio</span>
                 </div><br>
                 <!-- ms <input type="number" step="0.001" min="0" v-model.lazy="ms"> -->
+                <div class="options">
+                    min <input type="number" step="0.001" min="0" max="1" v-model.lazy="minValue">
+                </div>
                 <div id="spectrum" class="options">
                     <input class="inline" type="range" step="1" min="0" max="31" v-model.lazy="freq">
                     <canvas width="512" height="512" ref="spectrum"></canvas>

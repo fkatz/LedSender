@@ -7,12 +7,11 @@ var AudioEffect_1 = require("./effects/AudioEffect");
 var LedState = /** @class */ (function () {
     function LedState(ip, port, refreshRate) {
         this.color = new color_1.Color();
-        this.dim = { value: 1 };
         this.refreshRate = 60;
         this.effects = {
             rainbow: new RainbowEffect_1.RainbowEffect(this.color),
-            pulse: new PulseEffect_1.PulseEffect(this.dim),
-            audio: new AudioEffect_1.AudioEffect(8081, this.dim)
+            pulse: new PulseEffect_1.PulseEffect(),
+            audio: new AudioEffect_1.AudioEffect(8081)
         };
         if (refreshRate != undefined)
             this.refreshRate = refreshRate;
@@ -21,9 +20,13 @@ var LedState = /** @class */ (function () {
     }
     LedState.prototype.getData = function () {
         var color = this.color.toRGB();
-        var r = ((color.r / 255) * 1000 * this.dim.value).toString();
-        var g = ((color.g / 255) * 1000 * this.dim.value).toString();
-        var b = ((color.b / 255) * 1000 * this.dim.value).toString();
+        var dim = Object.values(this.effects)
+            .filter(function (effect) { return effect.getDim != undefined; })
+            .map(function (effect) { return effect.getDim(); })
+            .reduce(function (acum, dim) { return acum * dim; });
+        var r = ((color.r / 255) * 1000 * dim).toString();
+        var g = ((color.g / 255) * 1000 * dim).toString();
+        var b = ((color.b / 255) * 1000 * dim).toString();
         return r + ":" + g + ":" + b;
     };
     LedState.prototype.getIP = function () {
@@ -37,7 +40,6 @@ var LedState = /** @class */ (function () {
     };
     LedState.prototype.get = function () {
         var state = {
-            dim: this.dim.value,
             color: this.color.toHSV(),
             ip: this.ip,
             refreshRate: this.refreshRate
@@ -49,9 +51,6 @@ var LedState = /** @class */ (function () {
         return state;
     };
     LedState.prototype.set = function (state) {
-        if (state.dim != undefined) {
-            this.dim.value = Number(state.dim);
-        }
         if (state.ip != undefined) {
             this.ip = state.ip;
         }
